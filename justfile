@@ -15,6 +15,9 @@ compile:
 compile-ci $CI="1":
     ./mill __.compile
 
+code-coverage:
+    ./mill scoverage.xmlReportAll
+
 docs-serve:
     uv run zensical serve
 
