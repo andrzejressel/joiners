@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  compile-test-coverage:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            runner: ubuntu-24.04
+          - os: linux
+            arch: arm64
+            runner: ubuntu-24.04-arm
+          - os: windows
+            arch: amd64
+            runner: windows-2025
+#          - os: windows
+#            arch: arm64
+#            runner: windows-11-arm
+          - os: macos
+            arch: amd64
+            runner: macos-26-intel
+          - os: macos
+            arch: arm64
+            runner: macos-26 
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+
+      - name: Compile all modules
+        run: just compile
+
+      - name: Run tests
+        run: just test
+
+      - name: Generate aggregated scoverage XML report
+        run: just code-coverage
+
+      - name: Upload report to Codecov
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          files: out/scoverage/xmlReportAll.dest/scoverage.xml
+          fail_ci_if_error: true
+
+      - name: Upload test results to Codecov
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          # https://github.com/codecov/codecov-action/issues/1728#issuecomment-2671077436
+          files: "\"out/**/testForked.dest/test-report.xml\""
+          fail_ci_if_error: true
+          report_type: test_results
+
+  notify-success:
+    needs:
+      - compile-test-coverage
+    runs-on: ubuntu-slim
+    steps:
+      - run: true

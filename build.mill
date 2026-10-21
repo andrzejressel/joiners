@@ -1,16 +1,57 @@
 //| mill-version: 1.1.10
 //| mvnDeps:
 //| - "com.goyeau::mill-scalafix::0.6.2"
+//| - "com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION"
 
 package build
 import mill.*, scalalib.*
 import com.goyeau.mill.scalafix.ScalafixModule
+import mill.contrib.scoverage.ScoverageModule
+import mill.contrib.scoverage.ScoverageReport
 
-trait MyModule extends ScalaModule with ScalafixModule {
+enum Platform {
+  case WindowsX64, WindowsArm64, MacX64, MacArm64, LinuxX64, LinuxArm64
+
+  def jvmUrl: String = this match {
+    case WindowsX64 =>
+      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-windows-x64-jdk.zip"
+    case WindowsArm64 =>
+      sys.error("TODO: add Windows arm64 JVM url")
+    case MacX64 =>
+      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-macosx-x64.tar.gz"
+    case MacArm64 =>
+      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-macosx-aarch64.tar.gz"
+    case LinuxX64 =>
+      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-linux-x64.tar.gz"
+    case LinuxArm64 =>
+      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-linux-aarch64.tar.gz"
+  }
+}
+
+object Platform {
+  def current: Platform = {
+    val os = sys.props("os.name").toLowerCase
+    val arch = sys.props("os.arch").toLowerCase
+    val isArm = arch == "aarch64" || arch == "arm64"
+    if (os.contains("win")) { if (isArm) WindowsArm64 else WindowsX64 }
+    else if (os.contains("mac")) { if (isArm) MacArm64 else MacX64 }
+    else if (os.contains("linux")) { if (isArm) LinuxArm64 else LinuxX64 }
+    else sys.error(s"Unsupported platform: $os / $arch")
+  }
+}
+
+trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
+  self =>
   def scalaVersion = "3.9.0"
 
-  override def jvmVersion =
-    "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-windows-x64-jdk.zip"
+  override lazy val scoverage: ScoverageData = new ScoverageData {
+    override def jvmVersion = Task {
+      self.jvmVersion()
+    }
+  }
+  override def scoverageVersion: T[String] = "2.5.2"
+
+  override def jvmVersion = Platform.current.jvmUrl
 
   private def isInCI: T[Boolean] = Task.Input {
     Task.env.contains("CI")
@@ -36,9 +77,19 @@ trait MyModule extends ScalaModule with ScalafixModule {
     "-feature"
   ) ++ ciScalacOptions()
 
-  object test extends ScalaTests with TestModule.Munit {
+  object test
+      extends ScalaTests
+      with TestModule.Munit
+      with ScoverageTests
+      with ScalafixModule {
     override def munitVersion: T[String] = "1.3.4"
   }
 }
 
 object base extends MyModule {}
+
+object scoverage extends ScoverageReport {
+  override def scalaVersion = "3.9.0"
+
+  override def scoverageVersion = "2.5.2"
+}
