@@ -8,10 +8,13 @@ build:
     build:
       html:
         - zensical build
+        - ./mill __.scalaDocGenerated
     post_build:
       # Copy the built site into the directory Read the Docs publishes.
       - mkdir -p $READTHEDOCS_OUTPUT/html/
       - cp --recursive site/* $READTHEDOCS_OUTPUT/html/
+      - mkdir -p $READTHEDOCS_OUTPUT/html/modules/javadoc
+      - cp --recursive out/base/scalaDocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/javadoc/base
 
 python:
   install:

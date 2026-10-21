@@ -15,6 +15,12 @@ compile:
 compile-ci $CI="1":
     ./mill __.compile
 
+generate-scaladoc:
+    ./mill __.scalaDocGenerated
+
+generate-scaladoc-ci $CI="1":
+    ./mill __.scalaDocGenerated
+
 code-coverage:
     ./mill scoverage.xmlReportAll
 
