@@ -2,7 +2,7 @@ package pl.andrzejressel.strcon4s
 
 import scala.collection.mutable
 
-/** [[mutable.LinkedHashMap]] that can be used in a multithreaded context.
+/** [[scala.collection.mutable.LinkedHashMap]] that can be used in a multithreaded context.
   */
 class ConcurrentLinkedHashMap[K, V] private (
     private val map: mutable.LinkedHashMap[K, V]

@@ -4,7 +4,7 @@ import pl.andrzejressel.strcon4s.joiners.FirstSuccessfulEitherJoiner
 
 import java.util.concurrent.StructuredTaskScope.Joiner
 
-/** Utility object with factory methods of various [[Joiner]]s
+/** Utility object with factory methods of various [[java.util.concurrent.StructuredTaskScope.Joiner Joiner]]s
   */
 object Joiners {
 
@@ -12,7 +12,7 @@ object Joiners {
     */
   object Either {
 
-    /** Returns a [[Joiner]] that will return the first successful result of
+    /** Returns a [[java.util.concurrent.StructuredTaskScope.Joiner Joiner]] that will return the first successful result of
       * type `B` or, if all tasks fail, a sequence of all failures of type `A`.
       *
       * @tparam A
@@ -20,7 +20,7 @@ object Joiners {
       * @tparam B
       *   the type of the success values
       * @return
-      *   a [[Joiner]] that will return the first successful result or a
+      *   a [[java.util.concurrent.StructuredTaskScope.Joiner Joiner]] that will return the first successful result or a
       *   sequence of failures
       */
     def firstSuccessful[A, B]
