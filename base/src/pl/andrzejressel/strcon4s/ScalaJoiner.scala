@@ -6,6 +6,7 @@ import pl.andrzejressel.strcon4s.ScalaJoiner.toScalaSubtask
 
 import java.util.concurrent.StructuredTaskScope.Joiner
 import java.util.concurrent.StructuredTaskScope.Subtask
+import scala.annotation.nowarn
 
 /** A Scala-friendly wrapper around the Java Joiner interface, providing a more
   * idiomatic way to handle subtasks in Scala.
@@ -19,11 +20,11 @@ import java.util.concurrent.StructuredTaskScope.Subtask
   */
 trait ScalaJoiner[T, R, R_X <: Exception] extends Joiner[T, R, R_X] {
 
-  def onFork(subtask: ScalaJoiner.StartingSubtask[T]): JoinerResult =
+  def onFork(@nowarn subtask: ScalaJoiner.StartingSubtask[T]): JoinerResult =
     JoinerResult.CONTINUE
 
   def onComplete(
-      subtask: SuccessfulSubtask[T] | ScalaJoiner.FailedSubtask[T]
+      @nowarn subtask: SuccessfulSubtask[T] | ScalaJoiner.FailedSubtask[T]
   ): JoinerResult = JoinerResult.CONTINUE
 
   override final def onFork(subtask: Subtask[T]): Boolean = {

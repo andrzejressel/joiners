@@ -9,7 +9,8 @@ import com.goyeau.mill.scalafix.ScalafixModule
 import mill.contrib.scoverage.ScoverageModule
 import mill.contrib.scoverage.ScoverageReport
 
-trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule { self =>
+trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
+  self =>
   def scalaVersion = "3.9.0"
 
   override lazy val scoverage: ScoverageData = new ScoverageData {
@@ -46,7 +47,11 @@ trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule { se
     "-feature"
   ) ++ ciScalacOptions()
 
-  object test extends ScalaTests with TestModule.Munit with ScoverageTests with ScalafixModule {
+  object test
+      extends ScalaTests
+      with TestModule.Munit
+      with ScoverageTests
+      with ScalafixModule {
     override def munitVersion: T[String] = "1.3.4"
   }
 }
