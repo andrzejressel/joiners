@@ -1,0 +1,44 @@
+//| mill-version: 1.1.10
+//| mvnDeps:
+//| - "com.goyeau::mill-scalafix::0.6.2"
+
+package build
+import mill.*, scalalib.*
+import com.goyeau.mill.scalafix.ScalafixModule
+
+trait MyModule extends ScalaModule with ScalafixModule {
+  def scalaVersion = "3.9.0"
+
+  override def jvmVersion =
+    "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-windows-x64-jdk.zip"
+
+  private def isInCI: T[Boolean] = Task.Input {
+    Task.env.contains("CI")
+  }
+
+  private def ciScalacOptions: T[Seq[String]] = Task {
+    if (isInCI()) {
+      Seq(
+        "-Werror"
+      )
+    } else {
+      Seq.empty
+    }
+  }
+
+  override def scalacOptions: T[Seq[String]] = super.scalacOptions() ++ Seq(
+    "-source:future",
+    "-rewrite",
+    "-new-syntax",
+    "-Wunused:all",
+    "-encoding",
+    "utf8",
+    "-feature"
+  ) ++ ciScalacOptions()
+
+  object test extends ScalaTests with TestModule.Munit {
+    override def munitVersion: T[String] = "1.3.4"
+  }
+}
+
+object base extends MyModule {}

@@ -1,0 +1,32 @@
+package pl.andrzejressel.strcon4s
+
+import pl.andrzejressel.strcon4s.joiners.FirstSuccessfulEitherJoiner
+
+import java.util.concurrent.StructuredTaskScope.Joiner
+
+/** Utility object with factory methods of various [[Joiner]]s
+  */
+object Joiners {
+
+  /** Joiners for [[Either]] values.
+    */
+  object Either {
+
+    /** Returns a [[Joiner]] that will return the first successful result of
+      * type `B` or, if all tasks fail, a sequence of all failures of type `A`.
+      *
+      * @tparam A
+      *   the type of the failure values
+      * @tparam B
+      *   the type of the success values
+      * @return
+      *   a [[Joiner]] that will return the first successful result or a
+      *   sequence of failures
+      */
+    def firstSuccessful[A, B]
+        : Joiner[Either[A, B], Either[Seq[A], B], Exception] = {
+      FirstSuccessfulEitherJoiner[A, B]()
+    }
+  }
+
+}
