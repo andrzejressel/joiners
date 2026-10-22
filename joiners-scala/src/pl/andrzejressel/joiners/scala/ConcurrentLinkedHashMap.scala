@@ -1,10 +1,10 @@
-package pl.andrzejressel.strcon4s
+package pl.andrzejressel.joiners.scala
 
 import scala.collection.mutable
 
 /** [[scala.collection.mutable.LinkedHashMap]] that can be used in a multithreaded context.
   */
-class ConcurrentLinkedHashMap[K, V] private (
+private class ConcurrentLinkedHashMap[K, V] private (
     private val map: mutable.LinkedHashMap[K, V]
 ) {
 

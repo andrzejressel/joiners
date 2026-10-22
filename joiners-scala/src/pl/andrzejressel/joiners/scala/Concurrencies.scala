@@ -1,6 +1,6 @@
-package pl.andrzejressel.strcon4s
+package pl.andrzejressel.joiners.scala
 
-import pl.andrzejressel.strcon4s.Extensions.*
+import pl.andrzejressel.joiners.scala.Extensions.*
 
 import java.util.concurrent.StructuredTaskScope
 import java.util.concurrent.StructuredTaskScope.Joiner
