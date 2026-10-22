@@ -1,4 +1,4 @@
-package pl.andrzejressel.strcon4s
+package pl.andrzejressel.joiners.scala
 
 import munit.FunSuite
 

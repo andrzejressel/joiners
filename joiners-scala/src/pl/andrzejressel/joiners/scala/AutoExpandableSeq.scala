@@ -1,4 +1,4 @@
-package pl.andrzejressel.strcon4s
+package pl.andrzejressel.joiners.scala
 
 import scala.collection.mutable
 
@@ -6,7 +6,7 @@ import scala.collection.mutable
   * arbitrary (potentially non-existing) indices. If an index is out of bounds,
   * the sequence will be expanded with default values (nulls) to accommodate the
   * new index. It is used for
-  * [[pl.andrzejressel.strcon4s.joiners.FirstSuccessfulEitherJoiner]] where the
+  * [[pl.andrzejressel.joiners.scala.joiners.FirstSuccessfulEitherJoiner]] where the
   * order of the results is important and I don't want to require user to
   * provide number of elements in advance.
   *

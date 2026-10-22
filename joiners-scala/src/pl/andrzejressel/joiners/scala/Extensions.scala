@@ -1,4 +1,4 @@
-package pl.andrzejressel.strcon4s
+package pl.andrzejressel.joiners.scala
 
 import java.util.concurrent.Callable
 import java.util.concurrent.StructuredTaskScope

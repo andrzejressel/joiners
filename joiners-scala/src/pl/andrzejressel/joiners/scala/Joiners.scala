@@ -1,6 +1,6 @@
-package pl.andrzejressel.strcon4s
+package pl.andrzejressel.joiners.scala
 
-import pl.andrzejressel.strcon4s.joiners.FirstSuccessfulEitherJoiner
+import pl.andrzejressel.joiners.scala.joiners.FirstSuccessfulEitherJoiner
 
 import java.util.concurrent.StructuredTaskScope.Joiner
 

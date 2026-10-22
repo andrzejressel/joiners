@@ -90,7 +90,7 @@ trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
   }
 }
 
-object base extends MyModule {}
+object `joiners-scala` extends MyModule {}
 
 object scoverage extends ScoverageReport {
   override def scalaVersion = "3.10.0"
