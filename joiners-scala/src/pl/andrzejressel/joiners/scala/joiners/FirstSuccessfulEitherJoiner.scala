@@ -24,7 +24,7 @@ import java.util.concurrent.StructuredTaskScope.Subtask
   * @tparam RIGHT
   *   The type of the right value in the Either. Represents the success case.
   */
-private class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
+private[scala] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
     extends ScalaJoiner[
       Either[LEFT, RIGHT],
       Either[Seq[LEFT], RIGHT],
