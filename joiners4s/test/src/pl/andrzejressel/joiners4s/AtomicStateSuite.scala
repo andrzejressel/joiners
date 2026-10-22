@@ -1,4 +1,4 @@
-package pl.andrzejressel.joiners.scala
+package pl.andrzejressel.joiners4s
 
 class AtomicStateSuite extends munit.FunSuite {
 
