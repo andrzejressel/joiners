@@ -4,10 +4,13 @@
 //| - "com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION"
 
 package build
-import mill.*, scalalib.*
+import mill.*
+import scalalib.*
 import com.goyeau.mill.scalafix.ScalafixModule
 import mill.contrib.scoverage.ScoverageModule
 import mill.contrib.scoverage.ScoverageReport
+import mill.javalib.publish.{PomSettings, VersionControl}
+import mill.scalalib.publish.{Developer, License}
 
 enum Platform {
   case WindowsX64, WindowsArm64, MacX64, MacArm64, LinuxX64, LinuxArm64
@@ -40,7 +43,7 @@ object Platform {
   }
 }
 
-trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
+trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule with PublishModule {
   self =>
   def scalaVersion = "3.10.0"
 
@@ -83,6 +86,23 @@ trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
     "-feature"
   ) ++ ciScalacOptions()
 
+  override def publishVersion: T[String] = "DEV-SNAPSHOT"
+
+  override def pomSettings: T[PomSettings] = PomSettings(
+    description = "Structured Concurrency utils for Scala",
+    organization = "pl.andrzejressel",
+    url = "https://joiners.readthedocs.io/en/latest/",
+    licenses = Seq(License.`GPL-2.0-with-classpath-exception`),
+    versionControl = VersionControl.github("andrzejressel", "joiners"),
+    developers = Seq(
+      Developer(
+        id = "andrzejressel",
+        name = "Andrzej Ressel",
+        email = "github@andrzejressel.pl"
+      )
+    )
+  )
+
   object test
       extends ScalaTests
       with TestModule.Munit
@@ -92,7 +112,9 @@ trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
   }
 }
 
-object `joiners4s` extends MyModule {}
+object `joiners4s` extends MyModule with PublishModule {
+  override def artifactName: T[String] = "joiners4s"
+}
 
 object scoverage extends ScoverageReport {
   override def scalaVersion = "3.10.0"
