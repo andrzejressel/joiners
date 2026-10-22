@@ -1,7 +1,7 @@
 package pl.andrzejressel.joiners4s
 
-import scala.annotation.tailrec
 import java.util.concurrent.atomic.AtomicReference
+import scala.annotation.tailrec
 
 /** Extension of [[AtomicReference]] that allows returning arbitrary additional
   * value from the update function. Used as part of the StateMachine in
