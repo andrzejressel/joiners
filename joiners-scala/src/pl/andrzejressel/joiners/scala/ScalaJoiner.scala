@@ -8,7 +8,7 @@ import java.util.concurrent.StructuredTaskScope.Joiner
 import java.util.concurrent.StructuredTaskScope.Subtask
 import scala.annotation.nowarn
 
-/** A Scala-friendly wrapper around the Java Joiner interface, providing a more
+/** A Scala-friendly wrapper around the Java [[java.util.concurrent.StructuredTaskScope.Joiner Joiner]] interface, providing a more
   * idiomatic way to handle subtasks in Scala.
   *
   * @tparam T

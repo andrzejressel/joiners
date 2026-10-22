@@ -52,7 +52,9 @@ trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
   override def scoverageVersion: T[String] = "2.5.2"
 
   override def scalaDocOptions = super.scalaDocOptions() ++ Seq(
-    "-external-mappings:.*scala.*::scaladoc3::https://scala-lang.org/api/3.x/,.*java.*::javadoc::https://docs.oracle.com/en/java/javase/27/docs/api/java.base/"
+    "-external-mappings:" +
+      s"(.*/)?scala/.*::scaladoc3::https://scala-lang.org/api/3.x/," +
+      s"(.*/)?java/.*::javadoc::https://docs.oracle.com/en/java/javase/27/docs/api/java.base/",
   )
 
   override def jvmVersion = Platform.current.jvmUrl
@@ -97,6 +99,3 @@ object scoverage extends ScoverageReport {
 
   override def scoverageVersion = "2.5.2"
 }
-
-// https://docs.oracle.com/javase/27/docs/api/java.base/java/util/concurrent/StructuredTaskScope.Joiner.html
-// https://docs.oracle.com/en/java/javase/27/docs/api/java.base/java/util/concurrent/StructuredTaskScope.Joiner.html

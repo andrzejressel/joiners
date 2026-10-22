@@ -15,7 +15,7 @@ import scala.collection.mutable
   * @param innerSeq
   *   The underlying mutable ArrayBuffer that holds the elements.
   */
-class AutoExpandableSeq[A](private val innerSeq: mutable.ArrayBuffer[A]) {
+private class AutoExpandableSeq[A](private val innerSeq: mutable.ArrayBuffer[A]) {
 
   /** Creates a new [[AutoExpandableSeq]] with an empty underlying mutable
     * ArrayBuffer.
