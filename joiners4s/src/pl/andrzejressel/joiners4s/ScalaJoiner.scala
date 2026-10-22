@@ -1,15 +1,16 @@
-package pl.andrzejressel.joiners.scala
+package pl.andrzejressel.joiners4s
 
-import pl.andrzejressel.joiners.scala.ScalaJoiner.JoinerResult
-import pl.andrzejressel.joiners.scala.ScalaJoiner.SuccessfulSubtask
-import pl.andrzejressel.joiners.scala.ScalaJoiner.toScalaSubtask
+import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult
+import pl.andrzejressel.joiners4s.ScalaJoiner.SuccessfulSubtask
+import pl.andrzejressel.joiners4s.ScalaJoiner.toScalaSubtask
 
 import java.util.concurrent.StructuredTaskScope.Joiner
 import java.util.concurrent.StructuredTaskScope.Subtask
 import scala.annotation.nowarn
 
-/** A Scala-friendly wrapper around the Java [[java.util.concurrent.StructuredTaskScope.Joiner Joiner]] interface, providing a more
-  * idiomatic way to handle subtasks in Scala.
+/** A Scala-friendly wrapper around the Java
+  * [[java.util.concurrent.StructuredTaskScope.Joiner Joiner]] interface,
+  * providing a more idiomatic way to handle subtasks in Scala.
   *
   * @tparam T
   *   The result type of subtask forked in the scope.

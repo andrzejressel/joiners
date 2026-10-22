@@ -1,8 +1,9 @@
-package pl.andrzejressel.joiners.scala
+package pl.andrzejressel.joiners4s
 
 import scala.collection.mutable
 
-/** [[scala.collection.mutable.LinkedHashMap]] that can be used in a multithreaded context.
+/** [[scala.collection.mutable.LinkedHashMap]] that can be used in a
+  * multithreaded context.
   */
 private class ConcurrentLinkedHashMap[K, V] private (
     private val map: mutable.LinkedHashMap[K, V]

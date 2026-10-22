@@ -1,7 +1,7 @@
-package pl.andrzejressel.joiners.scala
+package pl.andrzejressel.joiners4s
 
-import pl.andrzejressel.joiners.scala.Extensions.*
-import pl.andrzejressel.joiners.scala.joiners.FirstSuccessfulEitherJoiner
+import pl.andrzejressel.joiners4s.Extensions.*
+import pl.andrzejressel.joiners4s.joiners.FirstSuccessfulEitherJoiner
 
 import java.util.concurrent.StructuredTaskScope
 import scala.util.Using

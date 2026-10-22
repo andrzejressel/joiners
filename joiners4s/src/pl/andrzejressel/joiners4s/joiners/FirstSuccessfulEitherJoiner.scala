@@ -1,15 +1,15 @@
-package pl.andrzejressel.joiners.scala.joiners
+package pl.andrzejressel.joiners4s.joiners
 
-import pl.andrzejressel.joiners.scala.AtomicState
-import pl.andrzejressel.joiners.scala.ConcurrentLinkedHashMap
-import pl.andrzejressel.joiners.scala.Extensions.throwOnNull
-import pl.andrzejressel.joiners.scala.ScalaJoiner
-import pl.andrzejressel.joiners.scala.ScalaJoiner.FailedSubtask
-import pl.andrzejressel.joiners.scala.ScalaJoiner.JoinerResult
-import pl.andrzejressel.joiners.scala.ScalaJoiner.JoinerResult.CANCEL_SCOPE
-import pl.andrzejressel.joiners.scala.ScalaJoiner.JoinerResult.CONTINUE
-import pl.andrzejressel.joiners.scala.ScalaJoiner.ScalaSubtask
-import pl.andrzejressel.joiners.scala.ScalaJoiner.SuccessfulSubtask
+import pl.andrzejressel.joiners4s.AtomicState
+import pl.andrzejressel.joiners4s.ConcurrentLinkedHashMap
+import pl.andrzejressel.joiners4s.Extensions.throwOnNull
+import pl.andrzejressel.joiners4s.ScalaJoiner
+import pl.andrzejressel.joiners4s.ScalaJoiner.FailedSubtask
+import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult
+import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult.CANCEL_SCOPE
+import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult.CONTINUE
+import pl.andrzejressel.joiners4s.ScalaJoiner.ScalaSubtask
+import pl.andrzejressel.joiners4s.ScalaJoiner.SuccessfulSubtask
 
 import java.util.concurrent.StructuredTaskScope.CancelledByTimeoutException
 import java.util.concurrent.StructuredTaskScope.Subtask
@@ -24,7 +24,7 @@ import java.util.concurrent.StructuredTaskScope.Subtask
   * @tparam RIGHT
   *   The type of the right value in the Either. Represents the success case.
   */
-private[scala] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
+private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
     extends ScalaJoiner[
       Either[LEFT, RIGHT],
       Either[Seq[LEFT], RIGHT],

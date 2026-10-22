@@ -1,11 +1,11 @@
-package pl.andrzejressel.joiners.scala
+package pl.andrzejressel.joiners4s
 
 import java.util.concurrent.atomic.AtomicReference
 import scala.annotation.tailrec
 
 /** Extension of [[AtomicReference]] that allows returning arbitrary additional
   * value from the update function. Used as part of the StateMachine in
-  * [[pl.andrzejressel.joiners.scala.joiners.FirstSuccessfulEitherJoiner]] where the
+  * [[pl.andrzejressel.joiners4s.joiners.FirstSuccessfulEitherJoiner]] where the
   * additional value is used to indicate whether the scope should continue or
   * cancel the remaining tasks.
   *

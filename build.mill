@@ -53,8 +53,8 @@ trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
 
   override def scalaDocOptions = super.scalaDocOptions() ++ Seq(
     "-external-mappings:" +
-      s"(.*/)?scala/.*::scaladoc3::https://scala-lang.org/api/3.x/," +
-      s"(.*/)?java/.*::javadoc::https://docs.oracle.com/en/java/javase/27/docs/api/java.base/",
+      s".*scala.*::scaladoc3::https://scala-lang.org/api/3.x/," +
+      s".*java.*::javadoc::https://docs.oracle.com/en/java/javase/27/docs/api/java.base/"
   )
 
   override def jvmVersion = Platform.current.jvmUrl
@@ -92,7 +92,7 @@ trait MyModule extends ScalaModule with ScoverageModule with ScalafixModule {
   }
 }
 
-object `joiners-scala` extends MyModule {}
+object `joiners4s` extends MyModule {}
 
 object scoverage extends ScoverageReport {
   override def scalaVersion = "3.10.0"
