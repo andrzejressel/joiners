@@ -7,6 +7,22 @@ on:
       - main
 
 jobs:
+  check-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+
+      - name: Check formatting
+        run: just fmt
+
+      - run: git add . && git diff
+      - run: git diff --cached
+      - name: Ensure no files have changed
+        run: git add . && git diff --quiet && git diff --cached --quiet
+
   compile-test-coverage:
     strategy:
       fail-fast: false
@@ -63,6 +79,7 @@ jobs:
   notify-success:
     needs:
       - compile-test-coverage
+      - check-formatting
     runs-on: ubuntu-slim
     steps:
       - run: true
