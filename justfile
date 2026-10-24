@@ -21,6 +21,9 @@ generate-scaladoc:
 generate-scaladoc-ci $CI="1":
     ./mill __.scalaDocGenerated
 
+generate-scaladoc-watch:
+    ./mill -w __.scalaDocGenerated
+
 code-coverage:
     ./mill scoverage.xmlReportAll
 

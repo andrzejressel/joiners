@@ -4,8 +4,8 @@ import pl.andrzejressel.joiners4s.joiners.FirstSuccessfulEitherJoiner
 
 import java.util.concurrent.StructuredTaskScope.Joiner
 
-/** Utility object with factory methods of various
-  * [[java.util.concurrent.StructuredTaskScope.Joiner Joiner]]s
+/** Utility object with factory methods of various custom
+  * [[java.util.concurrent.StructuredTaskScope.Joiner Joiners]]
   */
 object Joiners {
 
