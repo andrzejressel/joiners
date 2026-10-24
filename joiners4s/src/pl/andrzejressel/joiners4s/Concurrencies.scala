@@ -1,35 +1,28 @@
 package pl.andrzejressel.joiners4s
 
-import pl.andrzejressel.joiners4s.Extensions.*
+import pl.andrzejressel.joiners4s.concurrencies.EitherFirstSuccessful
 
-import java.util.concurrent.StructuredTaskScope
-import java.util.concurrent.StructuredTaskScope.Joiner
-import scala.jdk.CollectionConverters.*
-import scala.util.Using
-
+/** Utility object for running
+  * [[pl.andrzejressel.joiners4s.Joiners Custom Joiners]] and
+  * [[java.util.concurrent.StructuredTaskScope.Joiner Java Joiners]] in a more
+  * Scala-friendly way.
+  *
+  * This object has the same structure as the
+  * [[pl.andrzejressel.joiners4s.Joiners Joiners]] object, but instead of
+  * returning Joiners, it exposes an `apply` method of `2-22` arity + one that
+  * takes a list of functions for each Joiner, so that they can be used in a
+  * more Scala-friendly way.
+  */
 object Concurrencies {
 
-  def getAll[A, B](
-      a: => A,
-      b: => B
-  ): (A, B) = {
-    val results = getAll(Seq(() => a, () => b))
-    (results(0).asInstanceOf[A], results(1).asInstanceOf[B])
+  /** Provides a Scala-friendly way to use the
+    * [[pl.andrzejressel.joiners4s.Joiners.Either Either Joiners]]
+    */
+  object Either {
+
+    /** Provides a Scala-friendly way to use the
+      * [[pl.andrzejressel.joiners4s.Joiners.Either.firstSuccessful Either.firstSuccessful Joiner]]
+      */
+    object FirstSuccessful extends EitherFirstSuccessful
   }
-
-  def getAll[A](
-      functions: Seq[() => A]
-  ): Seq[A] = {
-
-    Using(
-      StructuredTaskScope.open(
-        Joiner.allSuccessfulOrThrow[A, Throwable](identity)
-      )
-    ) { scope =>
-      functions.foreach(f => scope.fork(f()))
-      scope.join()
-    }.get.asScala.toSeq
-
-  }
-
 }

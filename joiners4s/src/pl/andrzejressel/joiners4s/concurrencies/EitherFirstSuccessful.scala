@@ -1,4 +1,4 @@
-package pl.andrzejressel.joiners4s
+package pl.andrzejressel.joiners4s.concurrencies
 
 import pl.andrzejressel.joiners4s.Extensions.*
 import pl.andrzejressel.joiners4s.joiners.FirstSuccessfulEitherJoiner
@@ -6,9 +6,9 @@ import pl.andrzejressel.joiners4s.joiners.FirstSuccessfulEitherJoiner
 import java.util.concurrent.StructuredTaskScope
 import scala.util.Using
 
-object EitherConcurrencies {
+private[joiners4s] trait EitherFirstSuccessful {
 
-  def firstSuccess[FAILURE, SUCCESS](
+  def apply[FAILURE, SUCCESS](
       functions: Seq[() => Either[FAILURE, SUCCESS]]
   ): Either[Seq[FAILURE], SUCCESS] = {
 
@@ -24,11 +24,11 @@ object EitherConcurrencies {
     }.get
   }
 
-  def firstSuccess[SUC1, FAIL1, SUC2, FAIL2](
+  def apply[SUC1, FAIL1, SUC2, FAIL2](
       first: => Either[FAIL1, SUC1],
       second: => Either[FAIL2, SUC2]
   ): Either[(FAIL1, FAIL2), SUC1 | SUC2] = {
-    firstSuccess[FAIL1 | FAIL2, SUC1 | SUC2](
+    apply[FAIL1 | FAIL2, SUC1 | SUC2](
       Seq(() => first, () => second)
     ).left.map {
       case Seq(f1, f2) => (f1.asInstanceOf[FAIL1], f2.asInstanceOf[FAIL2])
@@ -39,12 +39,12 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[SUC1, FAIL1, SUC2, FAIL2, SUC3, FAIL3](
+  def apply[SUC1, FAIL1, SUC2, FAIL2, SUC3, FAIL3](
       first: => Either[FAIL1, SUC1],
       second: => Either[FAIL2, SUC2],
       third: => Either[FAIL3, SUC3]
   ): Either[(FAIL1, FAIL2, FAIL3), SUC1 | SUC2 | SUC3] = {
-    firstSuccess[FAIL1 | FAIL2 | FAIL3, SUC1 | SUC2 | SUC3](
+    apply[FAIL1 | FAIL2 | FAIL3, SUC1 | SUC2 | SUC3](
       Seq(() => first, () => second, () => third)
     ).left.map {
       case Seq(f1, f2, f3) =>
@@ -56,13 +56,13 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[SUC1, FAIL1, SUC2, FAIL2, SUC3, FAIL3, SUC4, FAIL4](
+  def apply[SUC1, FAIL1, SUC2, FAIL2, SUC3, FAIL3, SUC4, FAIL4](
       first: => Either[FAIL1, SUC1],
       second: => Either[FAIL2, SUC2],
       third: => Either[FAIL3, SUC3],
       fourth: => Either[FAIL4, SUC4]
   ): Either[(FAIL1, FAIL2, FAIL3, FAIL4), SUC1 | SUC2 | SUC3 | SUC4] = {
-    firstSuccess[FAIL1 | FAIL2 | FAIL3 | FAIL4, SUC1 | SUC2 | SUC3 | SUC4](
+    apply[FAIL1 | FAIL2 | FAIL3 | FAIL4, SUC1 | SUC2 | SUC3 | SUC4](
       Seq(() => first, () => second, () => third, () => fourth)
     ).left.map {
       case Seq(f1, f2, f3, f4) =>
@@ -79,7 +79,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -100,7 +100,7 @@ object EitherConcurrencies {
     (FAIL1, FAIL2, FAIL3, FAIL4, FAIL5),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5
     ](
@@ -121,7 +121,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -145,7 +145,7 @@ object EitherConcurrencies {
     (FAIL1, FAIL2, FAIL3, FAIL4, FAIL5, FAIL6),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6
     ](
@@ -174,7 +174,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -201,7 +201,7 @@ object EitherConcurrencies {
     (FAIL1, FAIL2, FAIL3, FAIL4, FAIL5, FAIL6, FAIL7),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7
     ](
@@ -232,7 +232,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -262,7 +262,7 @@ object EitherConcurrencies {
     (FAIL1, FAIL2, FAIL3, FAIL4, FAIL5, FAIL6, FAIL7, FAIL8),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8
     ](
@@ -295,7 +295,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -328,7 +328,7 @@ object EitherConcurrencies {
     (FAIL1, FAIL2, FAIL3, FAIL4, FAIL5, FAIL6, FAIL7, FAIL8, FAIL9),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9
     ](
@@ -363,7 +363,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -399,7 +399,7 @@ object EitherConcurrencies {
     (FAIL1, FAIL2, FAIL3, FAIL4, FAIL5, FAIL6, FAIL7, FAIL8, FAIL9, FAIL10),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10
     ](
@@ -436,7 +436,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -487,7 +487,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11
     ](
@@ -526,7 +526,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -581,7 +581,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12
     ](
@@ -622,7 +622,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -681,7 +681,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13
     ](
@@ -724,7 +724,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -787,7 +787,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14
     ](
@@ -832,7 +832,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -899,7 +899,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14 | FAIL15,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15
     ](
@@ -962,7 +962,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -1033,7 +1033,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14 | FAIL15 | FAIL16,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16
     ](
@@ -1099,7 +1099,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -1174,7 +1174,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14 | FAIL15 | FAIL16 | FAIL17,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17
     ](
@@ -1243,7 +1243,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -1322,7 +1322,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14 | FAIL15 | FAIL16 | FAIL17 | FAIL18,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18
     ](
@@ -1394,7 +1394,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -1477,7 +1477,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18 | SUC19
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14 | FAIL15 | FAIL16 | FAIL17 | FAIL18 | FAIL19,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18 | SUC19
     ](
@@ -1552,7 +1552,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -1639,7 +1639,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18 | SUC19 | SUC20
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14 | FAIL15 | FAIL16 | FAIL17 | FAIL18 | FAIL19 | FAIL20,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18 | SUC19 | SUC20
     ](
@@ -1717,7 +1717,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -1808,7 +1808,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18 | SUC19 | SUC20 | SUC21
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14 | FAIL15 | FAIL16 | FAIL17 | FAIL18 | FAIL19 | FAIL20 | FAIL21,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18 | SUC19 | SUC20 | SUC21
     ](
@@ -1889,7 +1889,7 @@ object EitherConcurrencies {
     }
   }
 
-  def firstSuccess[
+  def apply[
       SUC1,
       FAIL1,
       SUC2,
@@ -1984,7 +1984,7 @@ object EitherConcurrencies {
     ),
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18 | SUC19 | SUC20 | SUC21 | SUC22
   ] = {
-    firstSuccess[
+    apply[
       FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10 | FAIL11 | FAIL12 | FAIL13 | FAIL14 | FAIL15 | FAIL16 | FAIL17 | FAIL18 | FAIL19 | FAIL20 | FAIL21 | FAIL22,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10 | SUC11 | SUC12 | SUC13 | SUC14 | SUC15 | SUC16 | SUC17 | SUC18 | SUC19 | SUC20 | SUC21 | SUC22
     ](

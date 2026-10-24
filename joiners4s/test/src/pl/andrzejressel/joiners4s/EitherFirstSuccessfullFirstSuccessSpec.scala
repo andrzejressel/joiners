@@ -2,10 +2,10 @@ package pl.andrzejressel.joiners4s
 
 import munit.FunSuite
 
-class EitherConcurrenciesFirstSuccessSpec extends FunSuite {
+class EitherFirstSuccessfullFirstSuccessSpec extends FunSuite {
 
   test("firstSuccess returns the first successful result") {
-    val result = EitherConcurrencies.firstSuccess(
+    val result = Concurrencies.Either.FirstSuccessful(
       { Thread.sleep(Int.MaxValue); Left("failure1") },
       Right(42)
     )
@@ -13,7 +13,7 @@ class EitherConcurrenciesFirstSuccessSpec extends FunSuite {
   }
 
   test("firstSuccess returns the second successful result if the first fails") {
-    val result = EitherConcurrencies.firstSuccess(
+    val result = Concurrencies.Either.FirstSuccessful(
       Left("failure1"),
       { Thread.sleep(100); Right(42) }
     )
@@ -21,7 +21,7 @@ class EitherConcurrenciesFirstSuccessSpec extends FunSuite {
   }
 
   test("failures of different types are returned as a tuple") {
-    val result = EitherConcurrencies.firstSuccess(
+    val result = Concurrencies.Either.FirstSuccessful(
       Left("failure1"),
       Left(42)
     )
@@ -33,7 +33,7 @@ class EitherConcurrenciesFirstSuccessSpec extends FunSuite {
   ) {
     val expectedException = new RuntimeException("failure2")
     val ex = intercept[RuntimeException] {
-      EitherConcurrencies.firstSuccess(
+      Concurrencies.Either.FirstSuccessful(
         {
           Thread.sleep(Int.MaxValue)
           Left("abc")
@@ -50,7 +50,7 @@ class EitherConcurrenciesFirstSuccessSpec extends FunSuite {
   ) {
     val expectedException = new RuntimeException("failure1")
     val ex = intercept[RuntimeException] {
-      EitherConcurrencies.firstSuccess(
+      Concurrencies.Either.FirstSuccessful(
         {
           throw expectedException
         }, {
@@ -67,7 +67,7 @@ class EitherConcurrenciesFirstSuccessSpec extends FunSuite {
   ) {
     val expectedException = new RuntimeException("failure1")
     val ex = intercept[RuntimeException] {
-      EitherConcurrencies.firstSuccess(
+      Concurrencies.Either.FirstSuccessful(
         {
           Thread.sleep(100)
           throw expectedException
@@ -81,7 +81,7 @@ class EitherConcurrenciesFirstSuccessSpec extends FunSuite {
 
   test("firstSuccess returns value when exception is thrown after Right") {
     val expectedException = new RuntimeException("failure1")
-    val result = EitherConcurrencies.firstSuccess(
+    val result = Concurrencies.Either.FirstSuccessful(
       {
         Thread.sleep(100)
         throw expectedException
@@ -93,7 +93,7 @@ class EitherConcurrenciesFirstSuccessSpec extends FunSuite {
   }
 
   test("errors should be in correct order") {
-    val result = EitherConcurrencies.firstSuccess(
+    val result = Concurrencies.Either.FirstSuccessful(
       Left("failure1"),
       { Thread.sleep(200); Left(42) },
       Left(false)
