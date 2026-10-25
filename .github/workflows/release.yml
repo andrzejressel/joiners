@@ -35,6 +35,9 @@ jobs:
       - name: Replace version
         run: just update-version "${{ github.event.inputs.version }}"
 
+      - name: Run tests
+        run: just test
+
       - name: Setup git name and email
         run: |
           git config --local user.name "GitHub Actions"
@@ -42,14 +45,14 @@ jobs:
 
       - name: Create release branch
         run: |
-          git checkout -b preparation-for-deployment
-          git push origin HEAD:preparation-for-deployment
+          git checkout -b temporary-release-branch/${{ github.event.inputs.version }}
+          git push origin HEAD:temporary-release-branch/${{ github.event.inputs.version }}
 
       - name: Commit version change
         run: |
           git add -A
           git commit -m "Bump version to ${{ github.event.inputs.version }}"
-          git push origin HEAD:preparation-for-deployment
+          git push origin HEAD:temporary-release-branch/${{ github.event.inputs.version }}
 
       - name: Create tag
         run: |
@@ -58,7 +61,7 @@ jobs:
 
       - name: Remove release branch
         run: |
-          git push origin --delete preparation-for-deployment
+          git push origin --delete temporary-release-branch/${{ github.event.inputs.version }}
 
       - name: Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
