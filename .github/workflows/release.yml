@@ -1,0 +1,31 @@
+name: Release
+on:
+  push:
+    branches:
+      - preparation-for-deployment
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version'
+        required: true
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "full"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ssh-key: "{{ secrets.RELEASE_SSH_KEY }}"
