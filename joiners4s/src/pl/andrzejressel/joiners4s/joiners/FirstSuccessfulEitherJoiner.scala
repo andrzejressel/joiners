@@ -2,7 +2,6 @@ package pl.andrzejressel.joiners4s.joiners
 
 import pl.andrzejressel.joiners4s.AtomicState
 import pl.andrzejressel.joiners4s.ConcurrentLinkedHashMap
-import pl.andrzejressel.joiners4s.Extensions.throwOnNull
 import pl.andrzejressel.joiners4s.ScalaJoiner
 import pl.andrzejressel.joiners4s.ScalaJoiner.FailedSubtask
 import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult
@@ -73,13 +72,13 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
         Left(
           map
             .values()
-            .map(
-              _.throwOnNull(
-                new IllegalStateException(
-                  "Subtask failed but no error was recorded"
+            .map {
+              case FailureState.NoFailure =>
+                throw new IllegalStateException(
+                  "Unexpected state: NoFailure in the map"
                 )
-              )
-            )
+              case FailureState.FailureObtained(value) => value
+            }
         )
       case StateMachineState.ErrorOccurred(error) =>
         throw error
@@ -94,7 +93,7 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
     def this() = this(
       AtomicState(
         StateMachineState.FailureObtained(
-          ConcurrentLinkedHashMap[JavaSubtaskType, LEFT | Null]()
+          ConcurrentLinkedHashMap[JavaSubtaskType, FailureState]()
         )
       )
     )
@@ -104,7 +103,7 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
         case StateMachineState.FailureObtained(map) =>
           map.put(
             subtask.original,
-            null
+            FailureState.NoFailure
           ) // I know it's not idempotent and a side effect, but the map is threadsafe and we only add given element once
           (StateMachineState.FailureObtained(map), CONTINUE)
         case s: (StateMachineState.FirstSuccessObtained |
@@ -128,7 +127,7 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
         case StateMachineState.FailureObtained(map) =>
           map.put(
             subtask.original,
-            error
+            FailureState.FailureObtained(error)
           ) // I know it's not idempotent and a side effect, but the map is threadsafe and we only add given element once
           (StateMachineState.FailureObtained(map), CONTINUE)
         case s: (StateMachineState.FirstSuccessObtained |
@@ -159,10 +158,15 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
       * same as the order of subtasks that were submitted to the scope.
       */
     case class FailureObtained(
-        map: ConcurrentLinkedHashMap[JavaSubtaskType, LEFT | Null]
+        map: ConcurrentLinkedHashMap[JavaSubtaskType, FailureState]
     ) extends StateMachineState
 
     case class ErrorOccurred(error: Throwable) extends StateMachineState
+  }
+
+  private enum FailureState {
+    case NoFailure
+    case FailureObtained(value: LEFT)
   }
 
 }

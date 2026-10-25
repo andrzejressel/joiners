@@ -101,4 +101,20 @@ class EitherFirstSuccessfullFirstSuccessSpec extends FunSuite {
     assertEquals(result, Left(("failure1", 42, false)))
   }
 
+  test("firstSuccess supports returning null as a successful result") {
+    val result = Concurrencies.Either.FirstSuccessful(
+      { Thread.sleep(Int.MaxValue); Left("failure1") },
+      Right(null)
+    )
+    assertEquals(result, Right(null))
+  }
+
+  test("firstSuccess supports returning null as a failure result") {
+    val result = Concurrencies.Either.FirstSuccessful(
+      Left(null),
+      { Left("failure2") }
+    )
+    assertEquals(result, Left((null, "failure2")))
+  }
+
 }
