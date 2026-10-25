@@ -29,3 +29,39 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ssh-key: ${{ secrets.RELEASE_SSH_KEY }}
+
+      - uses: jdx/mise-action@9b200bcecbfd6303e69a4a261b2e09e3757440a7 # v5.2.0
+
+      - name: Replace version
+        run: just update-version "${{ github.event.inputs.version }}"
+
+      - name: Setup git name and email
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Create release branch
+        run: |
+          git checkout -b preparation-for-deployment
+          git push origin HEAD:preparation-for-deployment
+
+      - name: Commit version change
+        run: |
+          git add -A
+          git commit -m "Bump version to ${{ github.event.inputs.version }}"
+          git push origin HEAD:preparation-for-deployment
+
+      - name: Create tag
+        run: |
+          git tag -a "v${{ github.event.inputs.version }}" -m "Release v${{ github.event.inputs.version }}"
+          git push origin "v${{ github.event.inputs.version }}"
+
+      - name: Remove release branch
+        run: |
+          git push origin --delete preparation-for-deployment
+
+      - name: Release
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        with:
+          name: ${{ github.event.inputs.version }}
+          tag_name: "v${{ github.event.inputs.version }}"
