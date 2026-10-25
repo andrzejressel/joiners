@@ -9,6 +9,7 @@ on:
         description: 'New version'
         required: true
         type: string
+        default: 0.0.0.1
 
 env:
   CARGO_TERM_COLOR: always
