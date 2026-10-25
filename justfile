@@ -40,4 +40,4 @@ docs-build:
     uv run zensical build
 
 update-version NEW_VERSION:
-    sd "0.0.0-DEV" "{{NEW_VERSION}}"
+    sd "0.0.0-DEV" "{{NEW_VERSION}}" build.mill
