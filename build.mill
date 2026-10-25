@@ -91,7 +91,7 @@ trait MyModule
     "-feature"
   ) ++ ciScalacOptions()
 
-  override def publishVersion: T[String] = "DEV-SNAPSHOT"
+  override def publishVersion: T[String] = "0.0.0-DEV"
 
   override def pomSettings: T[PomSettings] = PomSettings(
     description = "Structured Concurrency utils for Scala",

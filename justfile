@@ -27,8 +27,17 @@ generate-scaladoc-watch:
 code-coverage:
     ./mill scoverage.xmlReportAll
 
+publish-local:
+    ./mill __.publishLocal
+
+publish:
+    ./mill mill.javalib.SonatypeCentralPublishModule/
+
 docs-serve:
     uv run zensical serve
 
 docs-build:
     uv run zensical build
+
+update-version NEW_VERSION:
+    sd "0.0.0-DEV" "{{NEW_VERSION}}"
