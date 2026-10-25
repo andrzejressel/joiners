@@ -13,6 +13,7 @@ import pl.andrzejressel.joiners4s.ScalaJoiner.SuccessfulSubtask
 
 import java.util.concurrent.StructuredTaskScope.CancelledByTimeoutException
 import java.util.concurrent.StructuredTaskScope.Subtask
+import scala.collection.mutable
 
 /** Joiner that waits for the first successful subtask (in the context of Either
   * the first right value) and returns it. If all subtasks fail (in the context
@@ -34,11 +35,16 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
   private type JavaSubtaskType = Subtask[Either[LEFT, RIGHT]]
   private type SubtaskType = ScalaSubtask[Either[LEFT, RIGHT]]
 
+  private var recentSubtaskId = 0;
+  private val subtaskIdMap = mutable.HashMap[JavaSubtaskType, Int]()
+
   private val sm = new StateMachine()
 
   override def onFork(
       subtask: ScalaJoiner.StartingSubtask[Either[LEFT, RIGHT]]
   ): JoinerResult = {
+    subtaskIdMap.put(subtask.original, recentSubtaskId)
+    recentSubtaskId += 1
     sm.addSubtask(subtask)
   }
 

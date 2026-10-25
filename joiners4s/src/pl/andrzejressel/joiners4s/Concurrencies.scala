@@ -9,7 +9,7 @@ import pl.andrzejressel.joiners4s.concurrencies.EitherFirstSuccessful
   *
   * This object has the same structure as the
   * [[pl.andrzejressel.joiners4s.Joiners Joiners]] object, but instead of
-  * returning Joiners, it exposes an `apply` method of `2-22` arity + one that
+  * returning Joiners, it exposes an `apply` method of `2-10` arity + one that
   * takes a list of functions for each Joiner, so that they can be used in a
   * more Scala-friendly way.
   */
