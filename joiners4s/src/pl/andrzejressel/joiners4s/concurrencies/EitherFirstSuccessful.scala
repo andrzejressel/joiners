@@ -400,7 +400,8 @@ private[joiners4s] trait EitherFirstSuccessful {
     SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10
   ] = {
     apply[
-      FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 | FAIL10,
+      FAIL1 | FAIL2 | FAIL3 | FAIL4 | FAIL5 | FAIL6 | FAIL7 | FAIL8 | FAIL9 |
+        FAIL10,
       SUC1 | SUC2 | SUC3 | SUC4 | SUC5 | SUC6 | SUC7 | SUC8 | SUC9 | SUC10
     ](
       Seq(
