@@ -1,6 +1,7 @@
-package pl.andrzejressel.joiners4s
+package pl.andrzejressel.joiners4s.joiners
 
 import munit.FunSuite
+import pl.andrzejressel.joiners4s.Concurrencies
 
 class EitherFirstSuccessfullFirstSuccessSpec extends FunSuite {
 

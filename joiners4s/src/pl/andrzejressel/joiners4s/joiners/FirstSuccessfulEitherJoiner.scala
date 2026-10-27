@@ -1,18 +1,16 @@
 package pl.andrzejressel.joiners4s.joiners
 
-import pl.andrzejressel.joiners4s.AtomicState
-import pl.andrzejressel.joiners4s.ConcurrentLinkedHashMap
-import pl.andrzejressel.joiners4s.ScalaJoiner
-import pl.andrzejressel.joiners4s.ScalaJoiner.FailedSubtask
-import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult
-import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult.CANCEL_SCOPE
-import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult.CONTINUE
-import pl.andrzejressel.joiners4s.ScalaJoiner.ScalaSubtask
-import pl.andrzejressel.joiners4s.ScalaJoiner.SuccessfulSubtask
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.FailedSubtask
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.JoinerResult
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.ScalaSubtask
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.SuccessfulSubtask
+import pl.andrzejressel.joiners4s.joiners.ScalaJoinerAdapter
 
+import java.util.concurrent.StructuredTaskScope
 import java.util.concurrent.StructuredTaskScope.CancelledByTimeoutException
-import java.util.concurrent.StructuredTaskScope.Subtask
-import scala.collection.mutable
+import java.util.concurrent.StructuredTaskScope.Subtask.State
+import scala.jdk.CollectionConverters.*
 
 /** Joiner that waits for the first successful subtask (in the context of Either
   * the first right value) and returns it. If all subtasks fail (in the context
@@ -31,142 +29,69 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
       Exception
     ] {
 
-  private type JavaSubtaskType = Subtask[Either[LEFT, RIGHT]]
   private type SubtaskType = ScalaSubtask[Either[LEFT, RIGHT]]
 
-  private var recentSubtaskId = 0;
-  private val subtaskIdMap = mutable.HashMap[JavaSubtaskType, Int]()
-
-  private val sm = new StateMachine()
+  private val joiner =
+    ScalaJoinerAdapter(
+      StructuredTaskScope.Joiner.allUntil[Either[LEFT, RIGHT]](subtask => {
+        subtask.state() == State.FAILED || (subtask
+          .state() == State.SUCCESS && subtask.get().isRight)
+      })
+    )
 
   override def onFork(
       subtask: ScalaJoiner.StartingSubtask[Either[LEFT, RIGHT]]
   ): JoinerResult = {
-    subtaskIdMap.put(subtask.original, recentSubtaskId)
-    recentSubtaskId += 1
-    sm.addSubtask(subtask)
+    joiner.onFork(subtask)
   }
 
   override def onComplete(
       subtask: SuccessfulSubtask[Either[LEFT, RIGHT]] |
         FailedSubtask[Either[LEFT, RIGHT]]
   ): JoinerResult = {
-    subtask match {
-      case SuccessfulSubtask(either, _) =>
-        either match {
-          case Left(error) =>
-            sm.addFailure(error, subtask)
-          case Right(value) =>
-            sm.addSuccess(value)
-        }
-      case FailedSubtask(exception, _) =>
-        sm.addError(exception)
-    }
+    joiner.onComplete(subtask)
   }
 
   override def result(): Either[Seq[LEFT], RIGHT] = {
-    sm.s.get match {
-      case StateMachineState.FirstSuccessObtained(value) =>
-        Right(value)
-      case StateMachineState.FailureObtained(map) =>
-        Left(
-          map
-            .values()
-            .map {
-              case FailureState.NoFailure =>
-                throw new IllegalStateException(
-                  "Unexpected state: NoFailure in the map"
-                )
-              case FailureState.FailureObtained(value) => value
-            }
+    val javaSubtasks =
+      joiner.result().asScala.map(ScalaJoiner.toScalaSubtask).toSeq
+    failedWithException(javaSubtasks) match {
+      case Some(exception) => throw exception
+      case None            => ()
+    }
+    getFirstRight(javaSubtasks) match {
+      case Some(value) => return Right(value)
+      case None        => ()
+    }
+    Left(getAllLefts(javaSubtasks))
+  }
+
+  private def failedWithException(
+      subtasks: Seq[SubtaskType]
+  ): Option[Throwable] = {
+    subtasks.collectFirst { case FailedSubtask(ex, _) =>
+      ex
+    }
+  }
+
+  private def getFirstRight(subtasks: Seq[SubtaskType]): Option[RIGHT] = {
+    subtasks.collectFirst { case SuccessfulSubtask(Right(value), _) =>
+      value
+    }
+  }
+
+  private def getAllLefts(subtasks: Seq[SubtaskType]): Seq[LEFT] = {
+    subtasks.map {
+      case SuccessfulSubtask(Left(value), _) => value
+      case other                             =>
+        throw new IllegalStateException(
+          s"Unexpected subtask state: $other"
         )
-      case StateMachineState.ErrorOccurred(error) =>
-        throw error
     }
   }
 
   override def timeout(): Either[Seq[LEFT], RIGHT] = {
     throw new CancelledByTimeoutException()
-  }
-
-  private class StateMachine(val s: AtomicState[StateMachineState]) {
-    def this() = this(
-      AtomicState(
-        StateMachineState.FailureObtained(
-          ConcurrentLinkedHashMap[JavaSubtaskType, FailureState]()
-        )
-      )
-    )
-
-    def addSubtask(subtask: SubtaskType): JoinerResult = {
-      s.update {
-        case StateMachineState.FailureObtained(map) =>
-          map.put(
-            subtask.original,
-            FailureState.NoFailure
-          ) // I know it's not idempotent and a side effect, but the map is threadsafe and we only add given element once
-          (StateMachineState.FailureObtained(map), CONTINUE)
-        case s: (StateMachineState.FirstSuccessObtained |
-              StateMachineState.ErrorOccurred) =>
-          (s, CANCEL_SCOPE)
-      }
-    }
-
-    def addSuccess(value: RIGHT): JoinerResult = {
-      s.update {
-        case StateMachineState.FailureObtained(_) =>
-          (StateMachineState.FirstSuccessObtained(value), CANCEL_SCOPE)
-        case s: (StateMachineState.FirstSuccessObtained |
-              StateMachineState.ErrorOccurred) =>
-          (s, CANCEL_SCOPE)
-      }
-    }
-
-    def addFailure(error: LEFT, subtask: SubtaskType): JoinerResult = {
-      s.update {
-        case StateMachineState.FailureObtained(map) =>
-          map.put(
-            subtask.original,
-            FailureState.FailureObtained(error)
-          ) // I know it's not idempotent and a side effect, but the map is threadsafe and we only add given element once
-          (StateMachineState.FailureObtained(map), CONTINUE)
-        case s: (StateMachineState.FirstSuccessObtained |
-              StateMachineState.ErrorOccurred) =>
-          (s, CANCEL_SCOPE)
-      }
-    }
-
-    def addError(error: Throwable): JoinerResult = {
-      s.update {
-        case StateMachineState.FailureObtained(_) =>
-          (StateMachineState.ErrorOccurred(error), CANCEL_SCOPE)
-        case s: (StateMachineState.FirstSuccessObtained |
-              StateMachineState.ErrorOccurred) =>
-          (s, CANCEL_SCOPE)
-      }
-    }
-  }
-
-  private sealed trait StateMachineState
-
-  private object StateMachineState {
-    case class FirstSuccessObtained(value: RIGHT) extends StateMachineState
-
-    /** Represents the state that collects different failures from the subtasks.
-      * Since the map is thread-safe and is **Linked** it preserves the order of
-      * insertion Thanks to that the order of failures in the result will be the
-      * same as the order of subtasks that were submitted to the scope.
-      */
-    case class FailureObtained(
-        map: ConcurrentLinkedHashMap[JavaSubtaskType, FailureState]
-    ) extends StateMachineState
-
-    case class ErrorOccurred(error: Throwable) extends StateMachineState
-  }
-
-  private enum FailureState {
-    case NoFailure
-    case FailureObtained(value: LEFT)
   }
 
 }
