@@ -1,16 +1,13 @@
 package pl.andrzejressel.joiners4s.joiners
 
+import pl.andrzejressel.joiners4s.Joiners
 import pl.andrzejressel.joiners4s.joiners.ScalaJoiner
 import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.FailedSubtask
 import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.JoinerResult
 import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.ScalaSubtask
 import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.SuccessfulSubtask
-import pl.andrzejressel.joiners4s.joiners.ScalaJoinerAdapter
 
-import java.util.concurrent.StructuredTaskScope
 import java.util.concurrent.StructuredTaskScope.CancelledByTimeoutException
-import java.util.concurrent.StructuredTaskScope.Subtask.State
-import scala.jdk.CollectionConverters.*
 
 /** Joiner that waits for the first successful subtask (in the context of Either
   * the first right value) and returns it. If all subtasks fail (in the context
@@ -31,13 +28,11 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
 
   private type SubtaskType = ScalaSubtask[Either[LEFT, RIGHT]]
 
-  private val joiner =
-    ScalaJoinerAdapter(
-      StructuredTaskScope.Joiner.allUntil[Either[LEFT, RIGHT]](subtask => {
-        subtask.state() == State.FAILED || (subtask
-          .state() == State.SUCCESS && subtask.get().isRight)
-      })
-    )
+  private val joiner = Joiners.Jdk.allUntil[Either[LEFT, RIGHT]] {
+    case FailedSubtask(_, _)            => true
+    case SuccessfulSubtask(Right(_), _) => true
+    case _                              => false
+  }
 
   override def onFork(
       subtask: ScalaJoiner.StartingSubtask[Either[LEFT, RIGHT]]
@@ -53,17 +48,16 @@ private[joiners4s] class FirstSuccessfulEitherJoiner[LEFT, RIGHT]
   }
 
   override def result(): Either[Seq[LEFT], RIGHT] = {
-    val javaSubtasks =
-      joiner.result().asScala.map(ScalaJoiner.toScalaSubtask).toSeq
-    failedWithException(javaSubtasks) match {
+    val subtasks = joiner.result()
+    failedWithException(subtasks) match {
       case Some(exception) => throw exception
       case None            => ()
     }
-    getFirstRight(javaSubtasks) match {
+    getFirstRight(subtasks) match {
       case Some(value) => return Right(value)
       case None        => ()
     }
-    Left(getAllLefts(javaSubtasks))
+    Left(getAllLefts(subtasks))
   }
 
   private def failedWithException(

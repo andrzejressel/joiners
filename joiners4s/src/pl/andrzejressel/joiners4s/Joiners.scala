@@ -1,13 +1,34 @@
 package pl.andrzejressel.joiners4s
 
+import pl.andrzejressel.joiners4s.joiners.AllUntilScalaJoiner
 import pl.andrzejressel.joiners4s.joiners.FirstSuccessfulEitherJoiner
-
-import java.util.concurrent.StructuredTaskScope.Joiner
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.ScalaSubtask
 
 /** Utility object with factory methods of various custom
   * [[java.util.concurrent.StructuredTaskScope.Joiner Joiners]]
   */
 object Joiners {
+
+  /** Additional factories for JDK
+    * [[java.util.concurrent.StructuredTaskScope.Joiner Joiners]].
+    */
+  object Jdk {
+
+    /** Wrapper around the JDK
+      * [[java.util.concurrent.StructuredTaskScope.Joiner#allUntil() allUntil]]
+      * that uses [[Seq]] and
+      * [[pl.andrzejressel.joiners4s.joiners.ScalaJoiner.ScalaSubtask ScalaSubtask]].
+      * Check original
+      * [[java.util.concurrent.StructuredTaskScope.Joiner#allUntil() allUntil]]
+      * documentation for details.
+      */
+    def allUntil[T](
+        predicate: ScalaSubtask[T] => Boolean
+    ): ScalaJoiner[T, Seq[ScalaSubtask[T]], Exception] = {
+      AllUntilScalaJoiner[T](predicate)
+    }
+  }
 
   /** Joiners for [[Either]] values.
     */
@@ -26,7 +47,7 @@ object Joiners {
       *   return the first successful result or a sequence of failures
       */
     def firstSuccessful[A, B]
-        : Joiner[Either[A, B], Either[Seq[A], B], Exception] = {
+        : ScalaJoiner[Either[A, B], Either[Seq[A], B], Exception] = {
       FirstSuccessfulEitherJoiner[A, B]()
     }
   }

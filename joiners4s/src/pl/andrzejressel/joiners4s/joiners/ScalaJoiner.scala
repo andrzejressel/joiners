@@ -72,7 +72,7 @@ object ScalaJoiner {
 
   def toScalaSubtask[T](
       subtask: Subtask[T]
-  ): SuccessfulSubtask[T] | FailedSubtask[T] | StartingSubtask[T] = {
+  ): ScalaSubtask[T] = {
     subtask.state() match {
       case Subtask.State.UNAVAILABLE => StartingSubtask(subtask)
       case Subtask.State.SUCCESS => SuccessfulSubtask(subtask.get(), subtask)
