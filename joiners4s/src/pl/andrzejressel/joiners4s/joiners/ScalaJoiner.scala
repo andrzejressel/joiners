@@ -1,8 +1,8 @@
-package pl.andrzejressel.joiners4s
+package pl.andrzejressel.joiners4s.joiners
 
-import pl.andrzejressel.joiners4s.ScalaJoiner.JoinerResult
-import pl.andrzejressel.joiners4s.ScalaJoiner.SuccessfulSubtask
-import pl.andrzejressel.joiners4s.ScalaJoiner.toScalaSubtask
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.JoinerResult
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.SuccessfulSubtask
+import pl.andrzejressel.joiners4s.joiners.ScalaJoiner.toScalaSubtask
 
 import java.util.concurrent.StructuredTaskScope.Joiner
 import java.util.concurrent.StructuredTaskScope.Subtask
@@ -15,7 +15,7 @@ import scala.annotation.nowarn
   * @tparam T
   *   The result type of subtask forked in the scope.
   * @tparam R
-  *   the type of the result returned byt the join() method
+  *   the type of the result returned by the join() method
   * @tparam R_X
   *   the type of the exception thrown by the join() method
   */
@@ -70,7 +70,7 @@ object ScalaJoiner {
 
   case class StartingSubtask[T](original: Subtask[T]) extends ScalaSubtask[T]
 
-  private def toScalaSubtask[T](
+  def toScalaSubtask[T](
       subtask: Subtask[T]
   ): SuccessfulSubtask[T] | FailedSubtask[T] | StartingSubtask[T] = {
     subtask.state() match {
@@ -89,6 +89,12 @@ object ScalaJoiner {
       case CANCEL_SCOPE => true
     }
 
+  }
+
+  object JoinerResult {
+    def fromJava(javaResult: Boolean): JoinerResult = {
+      if javaResult then CANCEL_SCOPE else CONTINUE
+    }
   }
 
 }
