@@ -28,8 +28,8 @@ object jacocoUnit extends JacocoReportModule {
     // Jacoco fails, because it tries to load the same class twice.
     jacocoReportTask(
       evaluator = evaluator,
-      sources = "joiners.test.allSources",
-      compiled = "joiners.test.compile",
+      sources = "joiners.allSources",
+      compiled = "joiners.compile",
       excludeSources = "",
       excludeCompiled = ""
     )()
