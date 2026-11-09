@@ -3,15 +3,39 @@
 //| - "com.goyeau::mill-scalafix::0.6.2"
 //| - "com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION"
 //| - "ch.epfl.scala:scalafix-interfaces:0.14.9" # Only new scalafix support 3.10
+//| - "de.tototec::de.tobiasroeser.mill.jacoco::0.1.0"
 
 package build
 import mill.*
 import scalalib.*
 import com.goyeau.mill.scalafix.ScalafixModule
+import coursier.{MavenRepository, Repository}
 import mill.contrib.scoverage.ScoverageModule
 import mill.contrib.scoverage.ScoverageReport
 import mill.javalib.publish.{PomSettings, VersionControl}
 import mill.scalalib.publish.{Developer, License}
+import de.tobiasroeser.mill.jacoco.JacocoTestModule
+import de.tobiasroeser.mill.jacoco.JacocoReportModule
+import mill.api.{Discover, ExternalModule, ModuleRef}
+
+object jacocoUnit extends JacocoReportModule {
+  override def jacocoVersion: T[String] = "0.8.16"
+
+  override def jacocoReportFull(
+      evaluator: mill.api.Evaluator
+  ): Task.Command[PathRef] = Task.Command {
+    // By default, Jacoco will include all the sources and compiled classes which includes Scala + scoverage
+    // Jacoco fails, because it tries to load the same class twice.
+    jacocoReportTask(
+      evaluator = evaluator,
+      sources = "joiners.allSources",
+      compiled = "joiners.compile",
+      excludeSources = "",
+      excludeCompiled = ""
+    )()
+  }
+
+}
 
 enum Platform {
   case WindowsX64, WindowsArm64, MacX64, MacArm64, LinuxX64, LinuxArm64
@@ -44,11 +68,42 @@ object Platform {
   }
 }
 
-trait MyModule
+trait MyModule extends JavaModule with PublishModule {
+
+  override def jvmVersion = Platform.current.jvmUrl
+
+  override def publishVersion: T[String] = "0.0.0-DEV"
+
+  override def pomSettings: T[PomSettings] = PomSettings(
+    description = "Structured Concurrency utils for Scala",
+    organization = "pl.andrzejressel",
+    url = "https://joiners.readthedocs.io/en/latest/",
+    licenses = Seq(License.`GPL-2.0-with-classpath-exception`),
+    versionControl = VersionControl.github("andrzejressel", "joiners"),
+    developers = Seq(
+      Developer(
+        id = "andrzejressel",
+        name = "Andrzej Ressel",
+        email = "github@andrzejressel.pl"
+      )
+    )
+  )
+
+}
+
+trait MyJavaModule extends MyModule {
+  object test extends JavaTests with TestModule.Junit6 with JacocoTestModule {
+    override def jupiterVersion: T[String] = "6.0.2"
+
+    override def jacocoReportModule = ModuleRef(jacocoUnit)
+  }
+}
+
+trait MyScalaModule
     extends ScalaModule
+    with MyModule
     with ScoverageModule
-    with ScalafixModule
-    with PublishModule {
+    with ScalafixModule {
   self =>
   def scalaVersion = "3.10.0"
 
@@ -64,8 +119,6 @@ trait MyModule
       s".*scala.*::scaladoc3::https://scala-lang.org/api/3.x/," +
       s".*java.*::javadoc::https://docs.oracle.com/en/java/javase/27/docs/api/java.base/"
   )
-
-  override def jvmVersion = Platform.current.jvmUrl
 
   private def isInCI: T[Boolean] = Task.Input {
     Task.env.contains("CI")
@@ -91,23 +144,6 @@ trait MyModule
     "-feature"
   ) ++ ciScalacOptions()
 
-  override def publishVersion: T[String] = "0.0.0-DEV"
-
-  override def pomSettings: T[PomSettings] = PomSettings(
-    description = "Structured Concurrency utils for Scala",
-    organization = "pl.andrzejressel",
-    url = "https://joiners.readthedocs.io/en/latest/",
-    licenses = Seq(License.`GPL-2.0-with-classpath-exception`),
-    versionControl = VersionControl.github("andrzejressel", "joiners"),
-    developers = Seq(
-      Developer(
-        id = "andrzejressel",
-        name = "Andrzej Ressel",
-        email = "github@andrzejressel.pl"
-      )
-    )
-  )
-
   object test
       extends ScalaTests
       with TestModule.Munit
@@ -117,7 +153,16 @@ trait MyModule
   }
 }
 
-object `joiners4s` extends MyModule with PublishModule {
+object `joiners` extends MyJavaModule {
+  override def artifactName: T[String] = "joiners"
+}
+
+object `joiners4s` extends MyScalaModule {
+
+  override def mvnDeps: T[Seq[Dep]] = Seq(
+    mvn"pl.andrzejressel:oneof:0.0.1"
+  )
+
   override def artifactName: T[String] = "joiners4s"
 }
 

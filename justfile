@@ -25,7 +25,7 @@ generate-scaladoc-watch:
     ./mill -w __.scalaDocGenerated
 
 code-coverage:
-    ./mill scoverage.xmlReportAll
+    ./mill scoverage.xmlReportAll + jacocoUnit.jacocoReportFull
 
 publish-local:
     ./mill __.publishLocal
