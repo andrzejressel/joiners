@@ -168,7 +168,8 @@ object `joiners` extends MyJavaModule {
 
 object `joiners4s` extends MyScalaModule {
 
-  override def moduleDeps: Seq[PublishModule] = super.moduleDeps ++ Seq(`joiners`)
+  override def moduleDeps: Seq[PublishModule] =
+    super.moduleDeps ++ Seq(`joiners`)
 
   override def artifactName: T[String] = "joiners4s"
 }
