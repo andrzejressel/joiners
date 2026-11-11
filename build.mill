@@ -43,17 +43,18 @@ enum Platform {
 
   def jvmUrl: String = this match {
     case WindowsX64 =>
-      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-windows-x64-jdk.zip"
+      "https://download.java.net/java/early_access/jdk28/23/GPL/openjdk-28-ea+23_windows-x64_bin.zip"
     case WindowsArm64 =>
       sys.error("TODO: add Windows arm64 JVM url")
     case MacX64 =>
-      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-macosx-x64.tar.gz"
+      sys.error("TODO: add Mac x64 JVM url")
+//      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-macosx-x64.tar.gz"
     case MacArm64 =>
-      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-macosx-aarch64.tar.gz"
+      "https://download.java.net/java/early_access/jdk28/23/GPL/openjdk-28-ea+23_macos-aarch64_bin.tar.gz"
     case LinuxX64 =>
-      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-linux-x64.tar.gz"
+      "https://download.java.net/java/early_access/jdk28/23/GPL/openjdk-28-ea+23_linux-x64_bin.tar.gz"
     case LinuxArm64 =>
-      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-linux-aarch64.tar.gz"
+      "https://download.java.net/java/early_access/jdk28/23/GPL/openjdk-28-ea+23_linux-aarch64_bin.tar.gz"
   }
 }
 
@@ -94,12 +95,8 @@ trait MyModule extends JavaModule with PublishModule {
 
 trait MyJavaModule extends MyModule {
 
-  override def javacOptions: T[Seq[String]] = super.javacOptions() ++ Seq("--release", "27", "--enable-preview")
-
   object test extends JavaTests with TestModule.Junit6 with JacocoTestModule {
     override def jupiterVersion: T[String] = "6.0.2"
-
-    override def forkArgs: T[Seq[String]] = super.forkArgs() ++ Seq("--enable-preview")
 
     override def jacocoReportModule = ModuleRef(jacocoUnit)
   }

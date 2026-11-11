@@ -5,8 +5,6 @@ public class JdkJoiners {
 
     }
     
-    public static FirstSuccessfulJoiners firstSuccessful() {
-        return new FirstSuccessfulJoiners();
-    }
+    public FirstSuccessfulJoiners firstSuccessful = new FirstSuccessfulJoiners();
     
 }
