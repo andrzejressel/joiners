@@ -16,13 +16,13 @@ compile-ci $CI="1":
     ./mill __.compile
 
 generate-scaladoc:
-    ./mill __.scalaDocGenerated
+    ./mill __.scalaDocGenerated + joiners.javadocGenerated
 
 generate-scaladoc-ci $CI="1":
-    ./mill __.scalaDocGenerated
+    ./mill __.scalaDocGenerated + joiners.javadocGenerated
 
 generate-scaladoc-watch:
-    ./mill -w __.scalaDocGenerated
+    ./mill -w __.scalaDocGenerated + joiners.javadocGenerated
 
 code-coverage:
     ./mill scoverage.xmlReportAll + jacocoUnit.jacocoReportFull

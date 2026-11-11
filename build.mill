@@ -4,6 +4,7 @@
 //| - "com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION"
 //| - "ch.epfl.scala:scalafix-interfaces:0.14.9" # Only new scalafix support 3.10
 //| - "de.tototec::de.tobiasroeser.mill.jacoco::0.1.0"
+//| mill-jvm-opts: ["--enable-preview"]
 
 package build
 import mill.*
@@ -92,8 +93,13 @@ trait MyModule extends JavaModule with PublishModule {
 }
 
 trait MyJavaModule extends MyModule {
+
+  override def javacOptions: T[Seq[String]] = super.javacOptions() ++ Seq("--release", "27", "--enable-preview")
+
   object test extends JavaTests with TestModule.Junit6 with JacocoTestModule {
     override def jupiterVersion: T[String] = "6.0.2"
+
+    override def forkArgs: T[Seq[String]] = super.forkArgs() ++ Seq("--enable-preview")
 
     override def jacocoReportModule = ModuleRef(jacocoUnit)
   }
@@ -154,14 +160,18 @@ trait MyScalaModule
 }
 
 object `joiners` extends MyJavaModule {
+
+  override def mvnDeps: T[Seq[Dep]] = Seq(
+    mvn"pl.andrzejressel:oneof:0.0.2",
+    mvn"io.arxila.javatuples:javatuples:2.0.1"
+  )
+
   override def artifactName: T[String] = "joiners"
 }
 
 object `joiners4s` extends MyScalaModule {
 
-  override def mvnDeps: T[Seq[Dep]] = Seq(
-    mvn"pl.andrzejressel:oneof:0.0.1"
-  )
+  override def moduleDeps: Seq[PublishModule] = super.moduleDeps ++ Seq(`joiners`)
 
   override def artifactName: T[String] = "joiners4s"
 }
