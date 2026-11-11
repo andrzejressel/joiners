@@ -8,11 +8,11 @@ import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FirstSuccessfulJoinersTest {
+public class AnySuccessfulOrThrowJoinersTest {
 
     @Test
     public void shouldReturnFirstResultIfItsFaster() throws Exception {
-        var result = Joiners.jdk.firstSuccessful.run(
+        var result = Joiners.jdk.anySuccessfulOrThrow.run(
                 () -> {
                     Thread.sleep(100);
                     return "first";
@@ -28,7 +28,7 @@ public class FirstSuccessfulJoinersTest {
 
     @Test
     public void shouldReturnSecondResultIfItsFaster() throws Exception {
-        var result = Joiners.jdk.firstSuccessful.run(
+        var result = Joiners.jdk.anySuccessfulOrThrow.run(
                 () -> {
                     Thread.sleep(200);
                     return "first";
@@ -44,7 +44,7 @@ public class FirstSuccessfulJoinersTest {
 
     @Test
     public void shouldThrowExceptionIfAllTasksFail() {
-        var exception = assertThrows(ExecutionException.class, () -> Joiners.jdk.firstSuccessful.run(
+        var exception = assertThrows(ExecutionException.class, () -> Joiners.jdk.anySuccessfulOrThrow.run(
                 () -> {
                     throw new RuntimeException("first");
                 },
