@@ -165,8 +165,10 @@ object `joiners` extends MyJavaModule {
 
   def javadocOptions = Task {
     super.javadocOptions() ++ Seq(
-      "-link", "https://javadoc.io/doc/io.arxila.javatuples/javatuples/2.0.1",
-      "-link", "https://javadoc.io/doc/pl.andrzejressel/oneof/0.0.2"
+      "-link",
+      "https://javadoc.io/doc/io.arxila.javatuples/javatuples/2.0.1",
+      "-link",
+      "https://javadoc.io/doc/pl.andrzejressel/oneof/0.0.2"
     )
   }
 
