@@ -6,6 +6,9 @@ fmt:
 test:
     ./mill __.test
 
+test-watch:
+    ./mill -w __.test
+
 intellij:
     ./mill mill.idea/
 

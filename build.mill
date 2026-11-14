@@ -7,17 +7,15 @@
 //| mill-jvm-opts: ["--enable-preview"]
 
 package build
-import mill.*
-import scalalib.*
+import build.Platform.*
 import com.goyeau.mill.scalafix.ScalafixModule
-import coursier.{MavenRepository, Repository}
-import mill.contrib.scoverage.ScoverageModule
-import mill.contrib.scoverage.ScoverageReport
+import de.tobiasroeser.mill.jacoco.{JacocoReportModule, JacocoTestModule}
+import mill.*
+import mill.api.ModuleRef
+import mill.contrib.scoverage.{ScoverageModule, ScoverageReport}
 import mill.javalib.publish.{PomSettings, VersionControl}
+import mill.scalalib.*
 import mill.scalalib.publish.{Developer, License}
-import de.tobiasroeser.mill.jacoco.JacocoTestModule
-import de.tobiasroeser.mill.jacoco.JacocoReportModule
-import mill.api.{Discover, ExternalModule, ModuleRef}
 
 object jacocoUnit extends JacocoReportModule {
   override def jacocoVersion: T[String] = "0.8.16"
@@ -38,24 +36,10 @@ object jacocoUnit extends JacocoReportModule {
 
 }
 
+val javaBuild = 24
+
 enum Platform {
   case WindowsX64, WindowsArm64, MacX64, MacArm64, LinuxX64, LinuxArm64
-
-  def jvmUrl: String = this match {
-    case WindowsX64 =>
-      "https://download.java.net/java/early_access/jdk28/23/GPL/openjdk-28-ea+23_windows-x64_bin.zip"
-    case WindowsArm64 =>
-      sys.error("TODO: add Windows arm64 JVM url")
-    case MacX64 =>
-      sys.error("TODO: add Mac x64 JVM url")
-//      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-macosx-x64.tar.gz"
-    case MacArm64 =>
-      "https://download.java.net/java/early_access/jdk28/23/GPL/openjdk-28-ea+23_macos-aarch64_bin.tar.gz"
-    case LinuxX64 =>
-      "https://download.java.net/java/early_access/jdk28/23/GPL/openjdk-28-ea+23_linux-x64_bin.tar.gz"
-    case LinuxArm64 =>
-      "https://download.java.net/java/early_access/jdk28/23/GPL/openjdk-28-ea+23_linux-aarch64_bin.tar.gz"
-  }
 }
 
 object Platform {
@@ -72,7 +56,23 @@ object Platform {
 
 trait MyModule extends JavaModule with PublishModule {
 
-  override def jvmVersion = Platform.current.jvmUrl
+  override def jvmVersion: T[String] = Task.Input {
+    Platform.current match {
+      case WindowsX64 =>
+        s"https://download.java.net/java/early_access/jdk28/${javaBuild}/GPL/openjdk-28-ea+${javaBuild}_windows-x64_bin.zip"
+      case WindowsArm64 =>
+        sys.error("TODO: add Windows arm64 JVM url")
+      case MacX64 =>
+        sys.error("TODO: add Mac x64 JVM url")
+      //      "https://corretto.aws/downloads/resources/27.0.0.35.1/amazon-corretto-27.0.0.35.1-macosx-x64.tar.gz"
+      case MacArm64 =>
+        s"https://download.java.net/java/early_access/jdk28/${javaBuild}/GPL/openjdk-28-ea+${javaBuild}_macos-aarch64_bin.tar.gz"
+      case LinuxX64 =>
+        s"https://download.java.net/java/early_access/jdk28/${javaBuild}/GPL/openjdk-28-ea+${javaBuild}_linux-x64_bin.tar.gz"
+      case LinuxArm64 =>
+        s"https://download.java.net/java/early_access/jdk28/${javaBuild}/GPL/openjdk-28-ea+${javaBuild}_linux-aarch64_bin.tar.gz"
+    }
+  }
 
   override def publishVersion: T[String] = "0.0.0-DEV"
 

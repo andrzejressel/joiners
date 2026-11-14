@@ -15,6 +15,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.StructuredTaskScope;
 
+import static pl.andrzejressel.joiners.ListUtils.extractCallable;
+import static pl.andrzejressel.joiners.ListUtils.zipWithIndex;
+
 /**
  * Utility class giving access to utility methods for {@link StructuredTaskScope.Joiner#anySuccessfulOrThrow() anySuccessfulOrThrow()} joiner.
  */
@@ -213,22 +216,17 @@ public class AnySuccessfulOrThrowJoiners {
      *
      * @param callables List of callables to run
      * @return A {@link Pair} containing the index of the first callable that completes successfully and its result, or an exception if all callables fail.
-     * @throws ExecutionException  Wrapper exception over the exception thrown by the callable that failed
+     * @throws ExecutionException   Wrapper exception over the exception thrown by the callable that failed
      * @throws InterruptedException If the current thread was interrupted while waiting for the callables to complete
      */
     private Pair<Integer, Object> run(List<Callable<?>> callables) throws ExecutionException, InterruptedException {
-        try (var scope = StructuredTaskScope.open(StructuredTaskScope.Joiner.<Pair<Integer, Object>>anySuccessfulOrThrow())) {
-            for (var i = 0; i < callables.size(); i++) {
-                var callable = callables.get(i);
-                var finalI = i;
-                scope.fork(() -> {
-                    var result = callable.call();
-                    return new Pair<>(finalI, result);
-                });
-            }
+        var objectCallables = ListUtils.convertQuestionMarkListToObjectList(callables);
+        var callablesWithIndex = zipWithIndex(objectCallables);
+        var indexInsideCallablePairs = extractCallable(callablesWithIndex);
 
-            return scope.join();
-        }
+        var joiner = StructuredTaskScope.Joiner.<Pair<Integer, Object>>anySuccessfulOrThrow();
+
+        return Joiners.joinCallables(joiner, indexInsideCallablePairs);
     }
 
 }
