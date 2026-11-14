@@ -15,7 +15,7 @@ build:
       - cp --recursive site/* $READTHEDOCS_OUTPUT/html/
       - mkdir -p $READTHEDOCS_OUTPUT/html/modules
       - cp --recursive out/joiners4s/scalaDocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/scaladoc
-      - cp --resursive out/joiners/javadocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/javadoc
+      - cp --recursive out/joiners/javadocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/javadoc
 
 python:
   install:
