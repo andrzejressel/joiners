@@ -15,7 +15,8 @@ nav = [
   { "Markdown in 5min" = "markdown.md" },
   { "Modules"= [
     { "Base" = [
-      { "Scaladoc" = "modules/javadoc/base/index.html" },
+      { "Javadoc" = "modules/javadoc/" },
+      { "Scaladoc" = "modules/scaladoc/" },
     ] }
   ] }
 ]

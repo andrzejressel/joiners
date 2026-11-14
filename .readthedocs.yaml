@@ -4,17 +4,20 @@ build:
   os: ubuntu-24.04
   tools:
     python: "3.14"
+  apt_packages:
+    - just
   jobs:
     build:
       html:
         - zensical build
-        - ./mill __.scalaDocGenerated
+        - just generate-scaladoc
     post_build:
       # Copy the built site into the directory Read the Docs publishes.
       - mkdir -p $READTHEDOCS_OUTPUT/html/
       - cp --recursive site/* $READTHEDOCS_OUTPUT/html/
-      - mkdir -p $READTHEDOCS_OUTPUT/html/modules/javadoc
-      - cp --recursive out/joiners4s/scalaDocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/javadoc/base
+      - mkdir -p $READTHEDOCS_OUTPUT/html/modules
+      - cp --recursive out/joiners4s/scalaDocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/scaladoc
+      - cp --recursive out/joiners/javadocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/javadoc
 
 python:
   install:
