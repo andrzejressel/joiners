@@ -13,8 +13,9 @@ build:
       # Copy the built site into the directory Read the Docs publishes.
       - mkdir -p $READTHEDOCS_OUTPUT/html/
       - cp --recursive site/* $READTHEDOCS_OUTPUT/html/
-      - mkdir -p $READTHEDOCS_OUTPUT/html/modules/javadoc
-      - cp --recursive out/joiners4s/scalaDocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/javadoc/base
+      - mkdir -p $READTHEDOCS_OUTPUT/html/modules
+      - cp --recursive out/joiners4s/scalaDocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/scaladoc
+      - cp --resursive out/joiners/javadocGenerated.dest/javadoc $READTHEDOCS_OUTPUT/html/modules/javadoc
 
 python:
   install:
