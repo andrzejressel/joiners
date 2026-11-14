@@ -7,8 +7,9 @@ build:
   jobs:
     build:
       html:
+        - asdf install just
         - zensical build
-        - ./mill __.scalaDocGenerated
+        - just generate-scaladoc
     post_build:
       # Copy the built site into the directory Read the Docs publishes.
       - mkdir -p $READTHEDOCS_OUTPUT/html/
