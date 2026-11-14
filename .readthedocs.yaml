@@ -7,10 +7,8 @@ build:
   jobs:
     build:
       html:
-        - asdf plugin add just
-        - asdf install just "1.59.0"
         - zensical build
-        - just generate-scaladoc
+        - ./mill __.scalaDocGenerated + joiners.javadocGenerated
     post_build:
       # Copy the built site into the directory Read the Docs publishes.
       - mkdir -p $READTHEDOCS_OUTPUT/html/
