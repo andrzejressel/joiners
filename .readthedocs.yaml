@@ -7,7 +7,8 @@ build:
   jobs:
     build:
       html:
-        - asdf install just
+        - asdf plugin add just
+        - asdf install just "1.59.0"
         - zensical build
         - just generate-scaladoc
     post_build:
