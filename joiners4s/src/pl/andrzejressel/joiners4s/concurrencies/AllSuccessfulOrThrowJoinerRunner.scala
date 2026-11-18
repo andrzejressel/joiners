@@ -37,6 +37,28 @@ trait AllSuccessfulOrThrowJoinerRunner {
       .toScala
   }
 
+  /** Runs the given functions in parallel and returns their results as a tuple.
+    * If any function fails, an exception is thrown.
+    *
+    * @param f1
+    *   First function to run
+    * @param f2
+    *   Second function to run
+    * @param f3
+    *   Third function to run
+    * @tparam T1
+    *   Type of the result of the first function
+    * @tparam T2
+    *   Type of the result of the second function
+    * @tparam T3
+    *   Type of the result of the third function
+    * @return
+    *   A tuple containing the results of all three functions
+    * @throws java.util.concurrent.ExecutionException
+    *   Wrapper exception over the exception thrown by the function that failed
+    * @throws InterruptedException
+    *   If the current thread was interrupted while waiting for the functions
+    */
   def apply[T1, T2, T3](
       f1: => T1,
       f2: => T2,
@@ -50,6 +72,32 @@ trait AllSuccessfulOrThrowJoinerRunner {
     (result.value0(), result.value1(), result.value2())
   }
 
+  /** Runs the given functions in parallel and returns their results as a tuple.
+    * If any function fails, an exception is thrown.
+    *
+    * @param f1
+    *   First function to run
+    * @param f2
+    *   Second function to run
+    * @param f3
+    *   Third function to run
+    * @param f4
+    *   Fourth function to run
+    * @tparam T1
+    *   Type of the result of the first function
+    * @tparam T2
+    *   Type of the result of the second function
+    * @tparam T3
+    *   Type of the result of the third function
+    * @tparam T4
+    *   Type of the result of the fourth function
+    * @return
+    *   A tuple containing the results of all four functions
+    * @throws java.util.concurrent.ExecutionException
+    *   Wrapper exception over the exception thrown by the function that failed
+    * @throws InterruptedException
+    *   If the current thread was interrupted while waiting for the functions
+    */
   def apply[T1, T2, T3, T4](
       f1: => T1,
       f2: => T2,
@@ -65,6 +113,36 @@ trait AllSuccessfulOrThrowJoinerRunner {
     (result.value0(), result.value1(), result.value2(), result.value3())
   }
 
+  /** Runs the given functions in parallel and returns their results as a tuple.
+    * If any function fails, an exception is thrown.
+    *
+    * @param f1
+    *   First function to run
+    * @param f2
+    *   Second function to run
+    * @param f3
+    *   Third function to run
+    * @param f4
+    *   Fourth function to run
+    * @param f5
+    *   Fifth function to run
+    * @tparam T1
+    *   Type of the result of the first function
+    * @tparam T2
+    *   Type of the result of the second function
+    * @tparam T3
+    *   Type of the result of the third function
+    * @tparam T4
+    *   Type of the result of the fourth function
+    * @tparam T5
+    *   Type of the result of the fifth function
+    * @return
+    *   A tuple containing the results of all five functions
+    * @throws java.util.concurrent.ExecutionException
+    *   Wrapper exception over the exception thrown by the function that failed
+    * @throws InterruptedException
+    *   If the current thread was interrupted while waiting for the functions
+    */
   def apply[T1, T2, T3, T4, T5](
       f1: => T1,
       f2: => T2,
@@ -89,6 +167,40 @@ trait AllSuccessfulOrThrowJoinerRunner {
     )
   }
 
+  /** Runs the given functions in parallel and returns their results as a tuple.
+    * If any function fails, an exception is thrown.
+    *
+    * @param f1
+    *   First function to run
+    * @param f2
+    *   Second function to run
+    * @param f3
+    *   Third function to run
+    * @param f4
+    *   Fourth function to run
+    * @param f5
+    *   Fifth function to run
+    * @param f6
+    *   Sixth function to run
+    * @tparam T1
+    *   Type of the result of the first function
+    * @tparam T2
+    *   Type of the result of the second function
+    * @tparam T3
+    *   Type of the result of the third function
+    * @tparam T4
+    *   Type of the result of the fourth function
+    * @tparam T5
+    *   Type of the result of the fifth function
+    * @tparam T6
+    *   Type of the result of the sixth function
+    * @return
+    *   A tuple containing the results of all six functions
+    * @throws java.util.concurrent.ExecutionException
+    *   Wrapper exception over the exception thrown by the function that failed
+    * @throws InterruptedException
+    *   If the current thread was interrupted while waiting for the functions
+    */
   def apply[T1, T2, T3, T4, T5, T6](
       f1: => T1,
       f2: => T2,
@@ -116,6 +228,44 @@ trait AllSuccessfulOrThrowJoinerRunner {
     )
   }
 
+  /** Runs the given functions in parallel and returns their results as a tuple.
+    * If any function fails, an exception is thrown.
+    *
+    * @param f1
+    *   First function to run
+    * @param f2
+    *   Second function to run
+    * @param f3
+    *   Third function to run
+    * @param f4
+    *   Fourth function to run
+    * @param f5
+    *   Fifth function to run
+    * @param f6
+    *   Sixth function to run
+    * @param f7
+    *   Seventh function to run
+    * @tparam T1
+    *   Type of the result of the first function
+    * @tparam T2
+    *   Type of the result of the second function
+    * @tparam T3
+    *   Type of the result of the third function
+    * @tparam T4
+    *   Type of the result of the fourth function
+    * @tparam T5
+    *   Type of the result of the fifth function
+    * @tparam T6
+    *   Type of the result of the sixth function
+    * @tparam T7
+    *   Type of the result of the seventh function
+    * @return
+    *   A tuple containing the results of all seven functions
+    * @throws java.util.concurrent.ExecutionException
+    *   Wrapper exception over the exception thrown by the function that failed
+    * @throws InterruptedException
+    *   If the current thread was interrupted while waiting for the functions
+    */
   def apply[T1, T2, T3, T4, T5, T6, T7](
       f1: => T1,
       f2: => T2,
@@ -146,6 +296,48 @@ trait AllSuccessfulOrThrowJoinerRunner {
     )
   }
 
+  /** Runs the given functions in parallel and returns their results as a tuple.
+    * If any function fails, an exception is thrown.
+    *
+    * @param f1
+    *   First function to run
+    * @param f2
+    *   Second function to run
+    * @param f3
+    *   Third function to run
+    * @param f4
+    *   Fourth function to run
+    * @param f5
+    *   Fifth function to run
+    * @param f6
+    *   Sixth function to run
+    * @param f7
+    *   Seventh function to run
+    * @param f8
+    *   Eighth function to run
+    * @tparam T1
+    *   Type of the result of the first function
+    * @tparam T2
+    *   Type of the result of the second function
+    * @tparam T3
+    *   Type of the result of the third function
+    * @tparam T4
+    *   Type of the result of the fourth function
+    * @tparam T5
+    *   Type of the result of the fifth function
+    * @tparam T6
+    *   Type of the result of the sixth function
+    * @tparam T7
+    *   Type of the result of the seventh function
+    * @tparam T8
+    *   Type of the result of the eighth function
+    * @return
+    *   A tuple containing the results of all eight functions
+    * @throws java.util.concurrent.ExecutionException
+    *   Wrapper exception over the exception thrown by the function that failed
+    * @throws InterruptedException
+    *   If the current thread was interrupted while waiting for the functions
+    */
   def apply[T1, T2, T3, T4, T5, T6, T7, T8](
       f1: => T1,
       f2: => T2,
@@ -188,6 +380,52 @@ trait AllSuccessfulOrThrowJoinerRunner {
     )
   }
 
+  /** Runs the given functions in parallel and returns their results as a tuple.
+    * If any function fails, an exception is thrown.
+    *
+    * @param f1
+    *   First function to run
+    * @param f2
+    *   Second function to run
+    * @param f3
+    *   Third function to run
+    * @param f4
+    *   Fourth function to run
+    * @param f5
+    *   Fifth function to run
+    * @param f6
+    *   Sixth function to run
+    * @param f7
+    *   Seventh function to run
+    * @param f8
+    *   Eighth function to run
+    * @param f9
+    *   Ninth function to run
+    * @tparam T1
+    *   Type of the result of the first function
+    * @tparam T2
+    *   Type of the result of the second function
+    * @tparam T3
+    *   Type of the result of the third function
+    * @tparam T4
+    *   Type of the result of the fourth function
+    * @tparam T5
+    *   Type of the result of the fifth function
+    * @tparam T6
+    *   Type of the result of the sixth function
+    * @tparam T7
+    *   Type of the result of the seventh function
+    * @tparam T8
+    *   Type of the result of the eighth function
+    * @tparam T9
+    *   Type of the result of the ninth function
+    * @return
+    *   A tuple containing the results of all nine functions
+    * @throws java.util.concurrent.ExecutionException
+    *   Wrapper exception over the exception thrown by the function that failed
+    * @throws InterruptedException
+    *   If the current thread was interrupted while waiting for the functions
+    */
   def apply[T1, T2, T3, T4, T5, T6, T7, T8, T9](
       f1: => T1,
       f2: => T2,
