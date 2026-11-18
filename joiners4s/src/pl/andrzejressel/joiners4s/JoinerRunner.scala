@@ -1,6 +1,6 @@
 package pl.andrzejressel.joiners4s
 
-import pl.andrzejressel.joiners4s.concurrencies.EitherFirstSuccessful
+import pl.andrzejressel.joiners4s.concurrencies.EitherFirstSuccessfulJoinerRunner
 
 /** Utility object for running
   * [[pl.andrzejressel.joiners4s.Joiners Custom Joiners]] and
@@ -13,7 +13,7 @@ import pl.andrzejressel.joiners4s.concurrencies.EitherFirstSuccessful
   * takes a list of functions for each Joiner, so that they can be used in a
   * more Scala-friendly way.
   */
-object Concurrencies {
+object JoinerRunner {
 
   /** Provides a Scala-friendly way to use the
     * [[pl.andrzejressel.joiners4s.Joiners.Either Either Joiners]]
@@ -23,6 +23,6 @@ object Concurrencies {
     /** Provides a Scala-friendly way to use the
       * [[pl.andrzejressel.joiners4s.Joiners.Either.firstSuccessful Either.firstSuccessful Joiner]]
       */
-    object FirstSuccessful extends EitherFirstSuccessful
+    object FirstSuccessful extends EitherFirstSuccessfulJoinerRunner
   }
 }

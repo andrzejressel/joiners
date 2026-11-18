@@ -21,9 +21,9 @@ import static pl.andrzejressel.joiners.ListUtils.zipWithIndex;
 /**
  * Utility class giving access to utility methods for {@link StructuredTaskScope.Joiner#anySuccessfulOrThrow() anySuccessfulOrThrow()} joiner.
  */
-public class AnySuccessfulOrThrowJoiners {
+public class AnySuccessfulOrThrowJoinerRunner {
 
-    AnySuccessfulOrThrowJoiners() {
+    AnySuccessfulOrThrowJoinerRunner() {
 
     }
 
@@ -226,7 +226,7 @@ public class AnySuccessfulOrThrowJoiners {
 
         var joiner = StructuredTaskScope.Joiner.<Pair<Integer, Object>>anySuccessfulOrThrow();
 
-        return Joiners.joinCallables(joiner, indexInsideCallablePairs);
+        return JoinerRunner.joinCallables(joiner, indexInsideCallablePairs);
     }
 
 }

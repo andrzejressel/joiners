@@ -7,16 +7,16 @@ import java.util.concurrent.StructuredTaskScope;
 /**
  * Utility class giving access to utility methods for different {@link java.util.concurrent.StructuredTaskScope.Joiner Joiners}.
  */
-public class Joiners {
+public class JoinerRunner {
 
-    private Joiners() {
+    private JoinerRunner() {
         throw new IllegalStateException("Utility class");
     }
 
     /**
      * Utility methods for standard library {@link java.util.concurrent.StructuredTaskScope.Joiner Joiners}.
      */
-    public static JdkJoiners jdk = new JdkJoiners();
+    public static JdkJoinerRunner jdk = new JdkJoinerRunner();
 
     /**
      * Utility method for joining a list of {@link Callable} tasks using a given {@link StructuredTaskScope.Joiner}.
@@ -31,7 +31,7 @@ public class Joiners {
      *       () -> {Thread.sleep(2000); return 2;},
      *       () -> {Thread.sleep(3000); return 3;}
      *   );
-     *   Integer result = Joiners.joinCallables(StructuredTaskScope.Joiner.anySuccessfulOrThrow(), tasks);
+     *   Integer result = JoinerRunner.joinCallables(StructuredTaskScope.Joiner.anySuccessfulOrThrow(), tasks);
      *   System.out.println(result); // Output: 1
      *}
      *
