@@ -1,11 +1,12 @@
 package pl.andrzejressel.joiners4s.concurrencies
 
 import pl.andrzejressel.joiners.JoinerRunner
-import pl.andrzejressel.joiners4s.Extensions.{toCallable, toScala}
+import pl.andrzejressel.joiners4s.Extensions.toCallable
+import pl.andrzejressel.joiners4s.Extensions.toScala
 
+import java.util.List as JList
 import java.util.concurrent.Callable
 import scala.jdk.CollectionConverters.*
-import java.util.List as JList
 
 trait AllSuccessfulOrThrowJoinerRunner {
 
