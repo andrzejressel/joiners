@@ -6,7 +6,7 @@ import pl.andrzejressel.joiners4s.joiners.FirstSuccessfulEitherJoiner
 import java.util.concurrent.StructuredTaskScope
 import scala.util.Using
 
-private[joiners4s] trait EitherFirstSuccessful {
+private[joiners4s] trait EitherFirstSuccessfulJoinerRunner {
 
   def apply[FAILURE, SUCCESS](
       functions: Seq[() => Either[FAILURE, SUCCESS]]

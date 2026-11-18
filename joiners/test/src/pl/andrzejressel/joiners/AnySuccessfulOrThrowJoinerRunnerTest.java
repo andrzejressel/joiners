@@ -10,13 +10,13 @@ import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AnySuccessfulOrThrowJoinersTest {
+public class AnySuccessfulOrThrowJoinerRunnerTest {
 
     @Nested
     class TwoArgumentsTest {
         @Test
         public void shouldReturnFirstResultIfItsFaster() throws Exception {
-            var result = Joiners.jdk.anySuccessfulOrThrow.run(
+            var result = JoinerRunner.jdk.anySuccessfulOrThrow.run(
                     () -> "first",
                     () -> {
                         Thread.sleep(Integer.MAX_VALUE);
@@ -29,7 +29,7 @@ public class AnySuccessfulOrThrowJoinersTest {
 
         @Test
         public void shouldReturnSecondResultIfItsFaster() throws Exception {
-            var result = Joiners.jdk.anySuccessfulOrThrow.run(
+            var result = JoinerRunner.jdk.anySuccessfulOrThrow.run(
                     () -> {
                         Thread.sleep(Integer.MAX_VALUE);
                         return "first";
@@ -42,7 +42,7 @@ public class AnySuccessfulOrThrowJoinersTest {
 
         @Test
         public void shouldThrowExceptionIfAllTasksFail() {
-            var exception = assertThrows(ExecutionException.class, () -> Joiners.jdk.anySuccessfulOrThrow.run(
+            var exception = assertThrows(ExecutionException.class, () -> JoinerRunner.jdk.anySuccessfulOrThrow.run(
                     () -> {
                         throw new RuntimeException("first");
                     },
@@ -62,7 +62,7 @@ public class AnySuccessfulOrThrowJoinersTest {
     class ThreeArgumentsTest {
         @Test
         public void shouldReturnFirstResultIfItsFaster() throws Exception {
-            var result = Joiners.jdk.anySuccessfulOrThrow.run(
+            var result = JoinerRunner.jdk.anySuccessfulOrThrow.run(
                     () -> "first",
                     () -> {
                         Thread.sleep(Integer.MAX_VALUE);
@@ -79,7 +79,7 @@ public class AnySuccessfulOrThrowJoinersTest {
 
         @Test
         public void shouldReturnSecondResultIfItsFaster() throws Exception {
-            var result = Joiners.jdk.anySuccessfulOrThrow.run(
+            var result = JoinerRunner.jdk.anySuccessfulOrThrow.run(
                     () -> {
                         Thread.sleep(Integer.MAX_VALUE);
                         return "first";
@@ -96,7 +96,7 @@ public class AnySuccessfulOrThrowJoinersTest {
 
         @Test
         public void shouldReturnThirdResultIfItsFaster() throws Exception {
-            var result = Joiners.jdk.anySuccessfulOrThrow.run(
+            var result = JoinerRunner.jdk.anySuccessfulOrThrow.run(
                     () -> {
                         Thread.sleep(Integer.MAX_VALUE);
                         return "first";
@@ -113,7 +113,7 @@ public class AnySuccessfulOrThrowJoinersTest {
 
         @Test
         public void shouldThrowExceptionIfAllTasksFail() {
-            var exception = assertThrows(ExecutionException.class, () -> Joiners.jdk.anySuccessfulOrThrow.run(
+            var exception = assertThrows(ExecutionException.class, () -> JoinerRunner.jdk.anySuccessfulOrThrow.run(
                     () -> {
                         throw new RuntimeException("first");
                     },

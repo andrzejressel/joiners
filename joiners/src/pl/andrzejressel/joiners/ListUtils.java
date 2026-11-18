@@ -12,7 +12,7 @@ class ListUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    /// {@link AnySuccessfulOrThrowJoiners#run(List)} uses `?` as a wildcard type, but we need to convert it to `Object` to be able to use it in the joiner. This method does that conversion.
+    /// {@link AnySuccessfulOrThrowJoinerRunner#run(List)} uses `?` as a wildcard type, but we need to convert it to `Object` to be able to use it in the joiner. This method does that conversion.
     @SuppressWarnings("JavadocReference")
     static List<Callable<Object>> convertQuestionMarkListToObjectList(List<Callable<?>> list) {
         var result = new ArrayList<Callable<Object>>();
