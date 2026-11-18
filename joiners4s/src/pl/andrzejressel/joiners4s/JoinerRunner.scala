@@ -1,9 +1,11 @@
 package pl.andrzejressel.joiners4s
 
 import pl.andrzejressel.joiners.JoinerRunner.joinCallables
-import pl.andrzejressel.joiners4s.concurrencies.{AllSuccessfulOrThrowJoinerRunner, EitherFirstSuccessfulJoinerRunner}
+import pl.andrzejressel.joiners4s.concurrencies.AllSuccessfulOrThrowJoinerRunner
+import pl.andrzejressel.joiners4s.concurrencies.EitherFirstSuccessfulJoinerRunner
 
-import java.util.concurrent.{Callable, StructuredTaskScope}
+import java.util.concurrent.Callable
+import java.util.concurrent.StructuredTaskScope
 import scala.jdk.CollectionConverters.*
 
 /** Utility object for running
@@ -22,7 +24,7 @@ object JoinerRunner {
   object JDK {
     object AllSuccessfulOrThrow extends AllSuccessfulOrThrowJoinerRunner
   }
-  
+
   /** Provides a Scala-friendly way to use the
     * [[pl.andrzejressel.joiners4s.Joiners.Either Either Joiners]]
     */
@@ -34,10 +36,15 @@ object JoinerRunner {
     object FirstSuccessful extends EitherFirstSuccessfulJoinerRunner
   }
 
-  def joinFunctions[T, R, R_X <: Throwable](joiner: StructuredTaskScope.Joiner[T, R, R_X], functions: List[() => T]): R = {
-    val callables = functions.map(f => new Callable[T] {
-      override def call(): T = f()
-    })
+  def joinFunctions[T, R, R_X <: Throwable](
+      joiner: StructuredTaskScope.Joiner[T, R, R_X],
+      functions: List[() => T]
+  ): R = {
+    val callables = functions.map(f =>
+      new Callable[T] {
+        override def call(): T = f()
+      }
+    )
     joinCallables(joiner, callables.asJava)
   }
 
