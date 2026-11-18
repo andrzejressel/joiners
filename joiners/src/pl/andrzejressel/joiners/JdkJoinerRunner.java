@@ -13,5 +13,10 @@ public class JdkJoinerRunner {
      * Utility methods for {@link java.util.concurrent.StructuredTaskScope.Joiner#anySuccessfulOrThrow() anySuccessfulOrThrow()} joiner.
      */
     public AnySuccessfulOrThrowJoinerRunner anySuccessfulOrThrow = new AnySuccessfulOrThrowJoinerRunner();
-    
+
+    /**
+     * Utility methods for {@link java.util.concurrent.StructuredTaskScope.Joiner#allSuccessfulOrThrow() allSuccessfullOrThrow()} joiner.
+     */
+    public AllSuccessfulOrThrowJoinerRunner allSuccessfulOrThrow = new AllSuccessfulOrThrowJoinerRunner();
+
 }
