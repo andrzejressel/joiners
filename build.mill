@@ -54,7 +54,26 @@ object Platform {
   }
 }
 
-trait MyModule extends JavaModule with PublishModule {
+trait MyPublishModule extends PublishModule {
+  override def publishVersion: T[String] = "0.0.0-DEV"
+
+  override def pomSettings: T[PomSettings] = PomSettings(
+    description = "Structured Concurrency utils for Scala",
+    organization = "pl.andrzejressel",
+    url = "https://joiners.readthedocs.io/en/latest/",
+    licenses = Seq(License.`GPL-2.0-with-classpath-exception`),
+    versionControl = VersionControl.github("andrzejressel", "joiners"),
+    developers = Seq(
+      Developer(
+        id = "andrzejressel",
+        name = "Andrzej Ressel",
+        email = "github@andrzejressel.pl"
+      )
+    )
+  )
+}
+
+trait MyModule extends JavaModule {
 
   override def jvmVersion: T[String] = Task.Input {
     Platform.current match {
@@ -74,28 +93,11 @@ trait MyModule extends JavaModule with PublishModule {
     }
   }
 
-  override def publishVersion: T[String] = "0.0.0-DEV"
-
-  override def pomSettings: T[PomSettings] = PomSettings(
-    description = "Structured Concurrency utils for Scala",
-    organization = "pl.andrzejressel",
-    url = "https://joiners.readthedocs.io/en/latest/",
-    licenses = Seq(License.`GPL-2.0-with-classpath-exception`),
-    versionControl = VersionControl.github("andrzejressel", "joiners"),
-    developers = Seq(
-      Developer(
-        id = "andrzejressel",
-        name = "Andrzej Ressel",
-        email = "github@andrzejressel.pl"
-      )
-    )
-  )
-
 }
 
 trait MyJavaModule extends MyModule {
 
-  object test extends JavaTests with TestModule.Junit6 with JacocoTestModule {
+  trait MyTest extends JavaTests with TestModule.Junit6 with JacocoTestModule {
     override def jupiterVersion: T[String] = "6.0.2"
 
     override def jacocoReportModule = ModuleRef(jacocoUnit)
@@ -147,7 +149,7 @@ trait MyScalaModule
     "-feature"
   ) ++ ciScalacOptions()
 
-  object test
+  trait MyTest
       extends ScalaTests
       with TestModule.Munit
       with ScoverageTests
@@ -156,7 +158,12 @@ trait MyScalaModule
   }
 }
 
-object `joiners` extends MyJavaModule {
+object `joiners` extends MyJavaModule with MyPublishModule {
+
+  private def docsDirectory = Task.Source(moduleDir / os.up / "docs")
+  private def markdownFiles = Task {
+    os.walk(docsDirectory().path).filter(_.ext == "md").sorted.map(PathRef(_))
+  }
 
   override def mvnDeps: T[Seq[Dep]] = Seq(
     mvn"pl.andrzejressel:oneof:0.0.2",
@@ -173,14 +180,43 @@ object `joiners` extends MyJavaModule {
   }
 
   override def artifactName: T[String] = "joiners"
+
+  object test extends MyTest {
+
+    override def sources: T[Seq[PathRef]] = super.sources() ++ generatedTests()
+
+    private def generatedTests = Task {
+      val files = markdownFiles().map(_.path.toString)
+      java_docs_extractor.runner().run(args = files)
+      Seq(PathRef(Task.dest))
+    }
+  }
+
 }
 
-object `joiners4s` extends MyScalaModule {
+object `joiners4s` extends MyScalaModule with MyPublishModule {
 
   override def moduleDeps: Seq[PublishModule] =
     super.moduleDeps ++ Seq(`joiners`)
 
   override def artifactName: T[String] = "joiners4s"
+
+  object test extends MyTest {
+
+  }
+
+}
+
+object `java_docs_extractor` extends MyScalaModule {
+  override def mvnDeps: T[Seq[Dep]] = Seq(
+    mvn"org.commonmark:commonmark:0.32.0",
+    mvn"org.apache.commons:commons-text:1.15.0"
+  )
+
+  object test extends MyTest {
+
+  }
+
 }
 
 object scoverage extends ScoverageReport {
