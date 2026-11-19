@@ -5,7 +5,8 @@ import org.commonmark.node.AbstractVisitor
 import org.commonmark.parser.Parser
 
 import java.io.File
-import java.nio.file.{Files, Paths}
+import java.nio.file.Files
+import java.nio.file.Paths
 import scala.collection.mutable.ListBuffer
 
 object Extractor {

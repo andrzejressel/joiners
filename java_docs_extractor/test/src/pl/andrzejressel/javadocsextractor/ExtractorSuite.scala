@@ -1,6 +1,7 @@
 package pl.andrzejressel.javadocsextractor
 
-import java.nio.file.{Files, Paths}
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class ExtractorSuite extends munit.FunSuite {
 
