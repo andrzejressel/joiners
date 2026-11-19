@@ -5,6 +5,6 @@ import pl.andrzejressel.joiners.JoinerRunner;
 
 return JoinerRunner.jdk.anySuccessfulOrThrow.run(
         () -> "1",
-        () -> 2
+        () -> { Thread.sleep(100); return 2; }
 ); // Result: First[value=1]
 ```
