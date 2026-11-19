@@ -17,7 +17,8 @@ object Extractor {
 
     allSnippets.foreach { snippet =>
       val javaFile = generateJavaFileFromJavaSnippet(snippet)
-      val outputPath = Paths.get("output", javaFile.packages :+ javaFile.fileName *).toFile
+      val outputPath =
+        Paths.get("output", javaFile.packages :+ javaFile.fileName*).toFile
       outputPath.getParentFile.mkdirs()
       Files.writeString(outputPath.toPath, javaFile.content)
     }
@@ -35,9 +36,12 @@ object Extractor {
   }
 
   def generateJavaFileFromJavaSnippet(javaSnippet: JavaSnippet): JavaFile = {
-    val className = s"GeneratedJavaSnippet${javaSnippet.hashCode().abs}"
+    // I have to use lines so the mismatch between Windows and Unix end lines won't affect the hash code.
+    val fileHashCode = javaSnippet.code.lines().toList.hashCode().abs
+    val className = s"GeneratedJavaSnippet$fileHashCode"
 
-    val escapedExpectedOutput = StringEscapeUtils.escapeJava(javaSnippet.expectedOutput)
+    val escapedExpectedOutput =
+      StringEscapeUtils.escapeJava(javaSnippet.expectedOutput)
 
     val lines = ListBuffer.empty[String]
     lines += s"package pl.andrzejressel.javadocsextractor.generated;"
@@ -55,7 +59,7 @@ object Extractor {
     lines += "            @Override"
     lines += "            public Object call() throws Exception {"
     javaSnippet.code.linesIterator.foreach { line =>
-    lines += s"                $line"
+      lines += s"                $line"
     }
     lines += "            }"
     lines += "        };"
@@ -72,13 +76,21 @@ object Extractor {
 
   private def convertStringToJavaSnippet(snippet: String): JavaSnippet = {
     val imports = snippet.linesIterator.filter(_.startsWith("import")).toList
-    val snippetWithoutImports = snippet.linesIterator.filterNot(_.startsWith("import")).mkString(System.lineSeparator()).trim
-    val lineWithExpectedResult = snippet.lines().filter(line => !line.isBlank).toList.getLast
+    val snippetWithoutImports = snippet.linesIterator
+      .filterNot(_.startsWith("import"))
+      .mkString(System.lineSeparator())
+      .trim
+    val lineWithExpectedResult =
+      snippet.lines().filter(line => !line.isBlank).toList.getLast
     val expectedResultRegex = ".*Result:\\s*(.*?)\\s*$".r
 
     lineWithExpectedResult match {
-      case expectedResultRegex(result) => JavaSnippet(imports, snippetWithoutImports, result)
-      case _ => throw new IllegalArgumentException(s"Expected result not found in last line [$lineWithExpectedResult] of snippet: [$snippet].")
+      case expectedResultRegex(result) =>
+        JavaSnippet(imports, snippetWithoutImports, result)
+      case _ =>
+        throw new IllegalArgumentException(
+          s"Expected result not found in last line [$lineWithExpectedResult] of snippet: [$snippet]."
+        )
     }
   }
 

@@ -34,8 +34,10 @@ class ExtractorSuite extends munit.FunSuite {
       javaFiles,
       Seq(
         JavaFile(
-          packages = Seq("pl", "andrzejressel", "javadocsextractor", "generated"),
-          fileName = "GeneratedJavaSnippet1473223028.java", // The hash code will vary, so this is just a placeholder
+          packages =
+            Seq("pl", "andrzejressel", "javadocsextractor", "generated"),
+          fileName =
+            "GeneratedJavaSnippet761226766.java", // The hash code will vary, so this is just a placeholder
           content = Files.readString(Paths.get(expectedFile.toURI))
         )
       )

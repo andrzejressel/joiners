@@ -4,7 +4,7 @@ import pl.andrzejressel.joiners.JoinerRunner;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GeneratedJavaSnippet1473223028 {
+public class GeneratedJavaSnippet761226766 {
     @Test
     public void testSnippet() throws Exception {
         var result = new java.util.concurrent.Callable<>() {
