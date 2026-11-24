@@ -76,10 +76,32 @@ jobs:
       - name: Ensure no files have changed
         run: git add . && git diff --quiet && git diff --cached --quiet
 
+  test-release-job:
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ssh-key: ${{ secrets.RELEASE_SSH_KEY }}
+
+      - uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
+
+      - name: Replace version
+        run: just update-version "1.0.0"
+
+      - name: Run tests
+        run: just test
+
+      - run: git add . && git diff
+      - run: git diff --cached
+      - name: Ensure files have not changed
+        run: git add . && ! (git diff --quiet && git diff --cached --quiet)
+
   notify-success:
     needs:
       - compile-test-coverage
       - check-formatting
+      - test-release-job
     runs-on: ubuntu-slim
     steps:
       - run: true
