@@ -55,7 +55,7 @@ object Platform {
 }
 
 trait MyPublishModule extends PublishModule {
-  override def publishVersion: T[String] = "0.0.0-DEV"
+  override def publishVersion: T[String] = "0.0.0.2"
 
   override def pomSettings: T[PomSettings] = PomSettings(
     description = "Structured Concurrency utils for Scala",
