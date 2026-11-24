@@ -92,6 +92,11 @@ jobs:
       - name: Run tests
         run: just test
 
+      - run: git add . && git diff
+      - run: git diff --cached
+      - name: Ensure files have not changed
+        run: git add . && ! (git diff --quiet && git diff --cached --quiet)
+
   notify-success:
     needs:
       - compile-test-coverage
