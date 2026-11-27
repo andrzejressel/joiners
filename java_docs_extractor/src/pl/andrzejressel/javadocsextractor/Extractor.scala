@@ -19,7 +19,7 @@ object Extractor {
     allSnippets.foreach { snippet =>
       val javaFile = generateJavaFileFromJavaSnippet(snippet)
       val outputPath =
-        Paths.get("output", javaFile.packages :+ javaFile.fileName*).toFile
+        Paths.get(".", javaFile.packages :+ javaFile.fileName*).toFile
       outputPath.getParentFile.mkdirs()
       Files.writeString(outputPath.toPath, javaFile.content)
     }
