@@ -43,4 +43,4 @@ docs-build:
     uv run zensical build
 
 update-version NEW_VERSION:
-    sd "0.0.0-DEV" "{{NEW_VERSION}}" build.mill
+    git grep -rl "0.0.0-DEV" | grep -v "justfile" | xargs sed -i 's/0.0.0-DEV/{{NEW_VERSION}}/g'
