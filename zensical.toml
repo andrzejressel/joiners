@@ -48,7 +48,6 @@ features = [
     # "toc.integrate",
 ]
 
-
 [project.theme.icon]
 repo = "fontawesome/brands/github"
 
