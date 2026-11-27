@@ -2,7 +2,6 @@
 site_url = "https://joiners.readthedocs.io"
 site_name = "Joiners"
 repo_url = "https://github.com/andrzejressel/joiners"
-repo = "fontawesome/brands/github"
 
 nav = [
     { "Get started" = "index.md" },
@@ -48,6 +47,10 @@ features = [
     # "toc.follow",
     # "toc.integrate",
 ]
+
+
+[project.theme.icon]
+repo = "fontawesome/brands/github"
 
 # logo = "assets/logo.png"
 
